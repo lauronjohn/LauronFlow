@@ -15,11 +15,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var accessibilityObserverTimer: Timer?
     private var isBusy = false
     private var currentRecordingURL: URL?
+    private var currentRecordingStartedAt: Date?
+
+    /// Recordings shorter than this are treated as an accidental hotkey tap, not a real
+    /// utterance, and are dropped without ever reaching the sidecar.
+    private let minimumRecordingDuration: TimeInterval = 0.3
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItemController = StatusItemController()
         statusItemController.onTestTranscription = { [weak self] in
             self?.runTestTranscription()
+        }
+        statusItemController.setLaunchAtLoginEnabled(LaunchAtLoginManager.isEnabled)
+        statusItemController.onToggleLaunchAtLogin = { [weak self] in
+            LaunchAtLoginManager.setEnabled(!LaunchAtLoginManager.isEnabled)
+            self?.statusItemController.setLaunchAtLoginEnabled(LaunchAtLoginManager.isEnabled)
         }
 
         sidecarManager.onCrash = { [weak self] message in
@@ -40,9 +50,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        PermissionsHelper.requestMicrophoneAccess { granted in
+        PermissionsHelper.requestMicrophoneAccess { [weak self] granted in
             if !granted {
                 logger.error("Microphone access not granted; recording will fail until enabled in System Settings.")
+                self?.statusItemController.setState(.error(
+                    "Microphone access denied — grant it in System Settings > Privacy & Security > Microphone."
+                ))
             }
         }
 
@@ -98,6 +111,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         do {
             currentRecordingURL = try audioRecorder.start()
+            currentRecordingStartedAt = Date()
             return true
         } catch {
             logger.error("Failed to start recording: \(String(describing: error), privacy: .public)")
@@ -134,6 +148,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard isBusy, let wavURL = currentRecordingURL else { return }
         currentRecordingURL = nil
         audioRecorder.stop()
+
+        let duration = currentRecordingStartedAt.map { Date().timeIntervalSince($0) } ?? minimumRecordingDuration
+        currentRecordingStartedAt = nil
+
+        guard duration >= minimumRecordingDuration else {
+            // Too short to be a real utterance — almost certainly an accidental hotkey tap.
+            // Drop it without ever reaching the sidecar.
+            try? FileManager.default.removeItem(at: wavURL)
+            statusItemController.setState(.idle)
+            isBusy = false
+            return
+        }
+
         statusItemController.setState(.transcribing)
 
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in

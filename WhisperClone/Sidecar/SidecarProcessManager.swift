@@ -5,6 +5,16 @@ final class SidecarProcessManager {
     private let queue = DispatchQueue(label: "com.lauronjohn.WhisperClone.sidecar")
     var onCrash: ((String) -> Void)?
 
+    // Crash auto-restart (M6): retry a small, capped number of times with a short
+    // backoff, then give up and report via `onCrash`. `generation` is bumped on every
+    // launch attempt and on `stop()`, so a termination callback or a pending retry from
+    // a since-superseded/intentionally-stopped attempt can be detected and ignored.
+    private let maxRetries = 3
+    private let retryBackoff: TimeInterval = 2.0
+    private let sustainedRunResetWindow: TimeInterval = 30.0
+    private var retryCount = 0
+    private var generation = 0
+
     func start() {
         queue.async { [weak self] in
             self?.launch()
@@ -15,6 +25,11 @@ final class SidecarProcessManager {
         process?.terminationHandler = nil
         process?.terminate()
         process = nil
+        queue.async { [weak self] in
+            guard let self else { return }
+            self.generation += 1
+            self.retryCount = 0
+        }
     }
 
     /// Polls for the socket file's existence (sidecar creates it only once
@@ -31,6 +46,9 @@ final class SidecarProcessManager {
     }
 
     private func launch() {
+        generation += 1
+        let myGeneration = generation
+
         guard let uv = SidecarPaths.resolveUvExecutable() else {
             onCrash?("Could not locate the `uv` executable (checked common Homebrew/cargo/local paths).")
             return
@@ -62,20 +80,48 @@ final class SidecarProcessManager {
         }
 
         task.terminationHandler = { [weak self] _ in
-            self?.handleTermination()
+            self?.queue.async {
+                self?.handleTermination(generation: myGeneration)
+            }
         }
 
         do {
             try task.run()
             process = task
+            scheduleRetryResetCheck(generation: myGeneration)
         } catch {
             onCrash?("Failed to launch sidecar: \(error.localizedDescription)")
         }
     }
 
-    /// M3 scope: just report. Crash auto-restart with a retry cap is M6 (PLAN.md).
-    private func handleTermination() {
+    /// Runs on `queue`. Ignores stale callbacks from an attempt that's since been
+    /// superseded by a newer launch or an intentional `stop()`. Retries up to
+    /// `maxRetries` times with `retryBackoff` between attempts before giving up.
+    private func handleTermination(generation: Int) {
+        guard generation == self.generation else { return }
         process = nil
-        onCrash?("Sidecar process exited. See \(SidecarPaths.logURL.path)")
+
+        guard retryCount < maxRetries else {
+            onCrash?("Sidecar crashed repeatedly (\(maxRetries) attempts) — giving up. See \(SidecarPaths.logURL.path)")
+            return
+        }
+
+        retryCount += 1
+        let generationAtSchedule = self.generation
+        queue.asyncAfter(deadline: .now() + retryBackoff) { [weak self] in
+            guard let self, generationAtSchedule == self.generation else { return }
+            self.launch()
+        }
+    }
+
+    /// Runs on `queue`. If the process launched as `generation` is still the current,
+    /// running one after `sustainedRunResetWindow`, treat it as healthy and forgive
+    /// retries consumed by earlier, unrelated crashes — otherwise a transient crash
+    /// storm at startup would leave the app permanently one crash away from giving up.
+    private func scheduleRetryResetCheck(generation: Int) {
+        queue.asyncAfter(deadline: .now() + sustainedRunResetWindow) { [weak self] in
+            guard let self, generation == self.generation, self.process != nil else { return }
+            self.retryCount = 0
+        }
     }
 }
