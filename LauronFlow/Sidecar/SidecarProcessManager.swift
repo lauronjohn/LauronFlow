@@ -71,6 +71,15 @@ final class SidecarProcessManager {
         // machine, which this Python build's site.py silently skips, breaking the
         // import. Non-editable install sidesteps it. See PLAN.md setup prerequisites.
         env["UV_NO_EDITABLE"] = "1"
+        // GUI-launched apps (Finder/LaunchServices) get a minimal PATH
+        // (/usr/bin:/bin:/usr/sbin:/sbin) with no Homebrew directories, unlike an
+        // interactive shell. parakeet-mlx shells out to ffmpeg at transcribe time, so
+        // without this the sidecar loads fine but every transcription fails with
+        // "FFmpeg is not installed or not in your PATH" the moment it's launched from
+        // /Applications instead of a Terminal-spawned `open`.
+        let extraPathDirs = ["/opt/homebrew/bin", "/usr/local/bin", NSHomeDirectory() + "/.cargo/bin"]
+        let existingPath = env["PATH"] ?? "/usr/bin:/bin:/usr/sbin:/sbin"
+        env["PATH"] = (extraPathDirs + [existingPath]).joined(separator: ":")
         task.environment = env
 
         FileManager.default.createFile(atPath: SidecarPaths.logURL.path, contents: nil)
