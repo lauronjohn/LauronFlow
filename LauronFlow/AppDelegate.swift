@@ -12,6 +12,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let audioRecorder = AudioRecorder()
     private let hotkeyManager = HotkeyManager()
     private let textInjector = TextInjector()
+    private let recordingWidget = RecordingWidgetController()
     private var accessibilityObserverTimer: Timer?
     private var isBusy = false
     private var currentRecordingURL: URL?
@@ -63,6 +64,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         accessibilityObserverTimer = PermissionsHelper.observeAccessibilityTrust { [weak self] trusted in
             self?.handleAccessibilityTrustChange(trusted)
         }
+
+        audioRecorder.onLevelUpdate = { [weak self] level in
+            self?.recordingWidget.updateLevel(level)
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -112,6 +117,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             currentRecordingURL = try audioRecorder.start()
             currentRecordingStartedAt = Date()
+            recordingWidget.show()
             return true
         } catch {
             logger.error("Failed to start recording: \(String(describing: error), privacy: .public)")
@@ -129,6 +135,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// system-wide secure input mode is active (e.g. a password field has focus) since synthetic
     /// keyboard events are blocked from reaching secure fields by design.
     private func injectTranscript(_ text: String) {
+        defer { recordingWidget.hide() }
+
         guard PermissionsHelper.isAccessibilityTrusted else {
             statusItemController.setState(.error(
                 "Transcribed but couldn't type it — Accessibility permission required. Grant it in System Settings > Privacy & Security > Accessibility."
@@ -157,11 +165,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // Drop it without ever reaching the sidecar.
             try? FileManager.default.removeItem(at: wavURL)
             statusItemController.setState(.idle)
+            recordingWidget.hide()
             isBusy = false
             return
         }
 
         statusItemController.setState(.transcribing)
+        recordingWidget.setTranscribing()
 
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
@@ -177,6 +187,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 logger.error("Transcription failed: \(String(describing: error), privacy: .public)")
                 DispatchQueue.main.async {
                     self.statusItemController.setState(.error("\(error)"))
+                    self.recordingWidget.hide()
                     self.isBusy = false
                 }
             }

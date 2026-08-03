@@ -15,6 +15,10 @@ final class AudioRecorder {
     private var targetFormat: AVAudioFormat?
     private(set) var isRecording = false
 
+    /// Fired on the main thread with a 0...1-ish RMS level for each tap buffer, for a live
+    /// waveform visualization. Not persisted anywhere — purely a UI feedback signal.
+    var onLevelUpdate: ((Float) -> Void)?
+
     @discardableResult
     func start() throws -> URL {
         let tempURL = FileManager.default.temporaryDirectory
@@ -74,6 +78,13 @@ final class AudioRecorder {
     }
 
     private func process(buffer: AVAudioPCMBuffer) {
+        if onLevelUpdate != nil {
+            let level = Self.rmsLevel(of: buffer)
+            DispatchQueue.main.async { [weak self] in
+                self?.onLevelUpdate?(level)
+            }
+        }
+
         guard let converter, let audioFile, let targetFormat else { return }
         let ratio = targetFormat.sampleRate / buffer.format.sampleRate
         let capacity = AVAudioFrameCount((Double(buffer.frameLength) * ratio).rounded(.up))
@@ -103,5 +114,21 @@ final class AudioRecorder {
         } catch {
             NSLog("AudioRecorder write error: \(error)")
         }
+    }
+
+    /// Root-mean-square of the buffer's first channel, roughly normalized so typical speech
+    /// lands well under 1.0 (headroom for the widget's animation curve to react to peaks).
+    private static func rmsLevel(of buffer: AVAudioPCMBuffer) -> Float {
+        guard let channelData = buffer.floatChannelData else { return 0 }
+        let frameLength = Int(buffer.frameLength)
+        guard frameLength > 0 else { return 0 }
+
+        let samples = channelData[0]
+        var sumOfSquares: Float = 0
+        for i in 0..<frameLength {
+            let sample = samples[i]
+            sumOfSquares += sample * sample
+        }
+        return (sumOfSquares / Float(frameLength)).squareRoot()
     }
 }

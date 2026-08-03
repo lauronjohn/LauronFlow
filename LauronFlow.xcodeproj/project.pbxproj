@@ -13,6 +13,7 @@
 		496B714541181FDF148D5FE7 /* SidecarProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */; };
 		4AF8E30175C767F449640BFE /* LauronFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B878CFC778B40D8D0ACBC86 /* LauronFlowApp.swift */; };
 		63F945D4D3D0479A00238CD8 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0006A3DC4A779CA9F7722007 /* StatusItemController.swift */; };
+		7F2F7AA6341E89C5B0BA2E87 /* RecordingWidgetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B904F0B1827F0A462C2226 /* RecordingWidgetController.swift */; };
 		8C0DA12C9747B3D0572E86A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66F68A984336CF6FC8ACDF69 /* Assets.xcassets */; };
 		9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */; };
 		AB49009D5E984F86D9F53E42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01186D00103B57E9507E9A21 /* HotkeyManager.swift */; };
@@ -20,6 +21,7 @@
 		E68859F4CE8D4A6A1DB9CA61 /* PermissionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDBCA2DB28BA655E5C9824F /* PermissionsHelper.swift */; };
 		E7272BE046AEFB87F585CF56 /* AudioConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7668B5B1042C60623B7A3BD6 /* AudioConstants.swift */; };
 		EAB15F9DC8D5CFFCE3254DF2 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119B5F7B16BA477B57457735 /* AudioRecorder.swift */; };
+		F2D286025311519BAE1E14A8 /* RecordingWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCED8A7F007F8B1CA50956DA /* RecordingWidgetView.swift */; };
 		FD0C9A2BA4131EE8EE918D8D /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735DF49980CD064FE58CAB32 /* TextInjector.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,7 +39,9 @@
 		95E1BE584F23B5C798963FE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		99E47E054E085D0B07CE9C9E /* LauronFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LauronFlow.entitlements; sourceTree = "<group>"; };
 		BA3F23292756B7A79A27B8B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BCED8A7F007F8B1CA50956DA /* RecordingWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingWidgetView.swift; sourceTree = "<group>"; };
 		C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarProcessManager.swift; sourceTree = "<group>"; };
+		C9B904F0B1827F0A462C2226 /* RecordingWidgetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingWidgetController.swift; sourceTree = "<group>"; };
 		F0BD69C800D9B90F17D04AFC /* LauronFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LauronFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarPaths.swift; sourceTree = "<group>"; };
 		FFABAF788E123215E5AD7B66 /* SidecarClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarClient.swift; sourceTree = "<group>"; };
@@ -71,6 +75,7 @@
 				81BFD24F92CD4084F70A1818 /* Audio */,
 				6B9F59F56EFBFD5A34EE3114 /* Hotkey */,
 				F8D1658C8317C0F34B2BE63A /* Permissions */,
+				A9424BD24245A95D82098994 /* RecordingWidget */,
 				6D1981F252217A41E00DF27B /* Sidecar */,
 				2F035E7D498C298A69690D98 /* Startup */,
 				92D5109CDEB8EF0C7D6AAE0C /* StatusBar */,
@@ -121,6 +126,15 @@
 				0006A3DC4A779CA9F7722007 /* StatusItemController.swift */,
 			);
 			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		A9424BD24245A95D82098994 /* RecordingWidget */ = {
+			isa = PBXGroup;
+			children = (
+				C9B904F0B1827F0A462C2226 /* RecordingWidgetController.swift */,
+				BCED8A7F007F8B1CA50956DA /* RecordingWidgetView.swift */,
+			);
+			path = RecordingWidget;
 			sourceTree = "<group>";
 		};
 		F6636267C3A3E5082E8669B5 /* Products */ = {
@@ -217,6 +231,8 @@
 				E4EE99BCBD6F119652EC7075 /* LaunchAtLoginManager.swift in Sources */,
 				4AF8E30175C767F449640BFE /* LauronFlowApp.swift in Sources */,
 				E68859F4CE8D4A6A1DB9CA61 /* PermissionsHelper.swift in Sources */,
+				7F2F7AA6341E89C5B0BA2E87 /* RecordingWidgetController.swift in Sources */,
+				F2D286025311519BAE1E14A8 /* RecordingWidgetView.swift in Sources */,
 				1DCF8ADF3BF13C2E05307BFC /* SidecarClient.swift in Sources */,
 				9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */,
 				496B714541181FDF148D5FE7 /* SidecarProcessManager.swift in Sources */,
