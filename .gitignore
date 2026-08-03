@@ -11,4 +11,6 @@ DerivedData/
 .DS_Store
 
 # Python sidecar is its own independent git repo — don't track its contents here
-sidecar/
+# (leading slash + exact case needed: macOS's case-insensitive FS would otherwise
+# also match WhisperClone/Sidecar/, the Swift sidecar-client code)
+/sidecar/

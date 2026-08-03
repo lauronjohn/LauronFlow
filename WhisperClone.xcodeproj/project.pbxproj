@@ -1,0 +1,365 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		086BEEA904DBE31E496BB265 /* SidecarClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8EFCD188E4B3B98C5BD4B1 /* SidecarClient.swift */; };
+		29A4A3D44DD1E2AE7DDAD0A3 /* AudioConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EF04C98D42CCA43B92ADF7 /* AudioConstants.swift */; };
+		488B51D57EFEA493D2C60B85 /* SidecarProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7F623AF71C00B0D43850B8 /* SidecarProcessManager.swift */; };
+		5AA9924D98BE17F2A4FE2579 /* WhisperCloneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95999924501E9E91B4283D2 /* WhisperCloneApp.swift */; };
+		5B3CA0E27CC63706C526F7B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F1DBC29EFAF9E7CD10F1F9B /* AppDelegate.swift */; };
+		70F6B21AD4133179C53F6D06 /* PermissionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E4204A4569EA42998D5F3F /* PermissionsHelper.swift */; };
+		9363F68138FF9D6315F2953C /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0405810FE3C318500B2EC0 /* AudioRecorder.swift */; };
+		B0031B80138873E45B30E292 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD09F48BA53735F6EFD6F220 /* AppState.swift */; };
+		BF6F12572C5AA452ABFE4FAF /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A67671A0BB1565253A1DDA /* StatusItemController.swift */; };
+		FC2ACC5AE567E7900D09B562 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0CACC941EAA10BBBCA1A55 /* SidecarPaths.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0F1DBC29EFAF9E7CD10F1F9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		58E4204A4569EA42998D5F3F /* PermissionsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsHelper.swift; sourceTree = "<group>"; };
+		61A67671A0BB1565253A1DDA /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
+		6A66FB4832C5F34D4401A9AE /* WhisperClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WhisperClone.entitlements; sourceTree = "<group>"; };
+		AB0405810FE3C318500B2EC0 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		AD8EFCD188E4B3B98C5BD4B1 /* SidecarClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarClient.swift; sourceTree = "<group>"; };
+		BC0CACC941EAA10BBBCA1A55 /* SidecarPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarPaths.swift; sourceTree = "<group>"; };
+		BD26AE0598575A062FBC9DD1 /* WhisperClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhisperClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2EF04C98D42CCA43B92ADF7 /* AudioConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConstants.swift; sourceTree = "<group>"; };
+		EC55F7A8EAD690B888050DB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		EF7F623AF71C00B0D43850B8 /* SidecarProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarProcessManager.swift; sourceTree = "<group>"; };
+		F95999924501E9E91B4283D2 /* WhisperCloneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperCloneApp.swift; sourceTree = "<group>"; };
+		FD09F48BA53735F6EFD6F220 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		21C26DD3A5A20A0F10E18CBA /* Sidecar */ = {
+			isa = PBXGroup;
+			children = (
+				AD8EFCD188E4B3B98C5BD4B1 /* SidecarClient.swift */,
+				BC0CACC941EAA10BBBCA1A55 /* SidecarPaths.swift */,
+				EF7F623AF71C00B0D43850B8 /* SidecarProcessManager.swift */,
+			);
+			path = Sidecar;
+			sourceTree = "<group>";
+		};
+		468215C18175683AD67F3AFB /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				D2EF04C98D42CCA43B92ADF7 /* AudioConstants.swift */,
+				AB0405810FE3C318500B2EC0 /* AudioRecorder.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		47457A4FC5FDA228EB2C68DD /* StatusBar */ = {
+			isa = PBXGroup;
+			children = (
+				FD09F48BA53735F6EFD6F220 /* AppState.swift */,
+				61A67671A0BB1565253A1DDA /* StatusItemController.swift */,
+			);
+			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		6C269D58004D516720552038 /* WhisperClone */ = {
+			isa = PBXGroup;
+			children = (
+				0F1DBC29EFAF9E7CD10F1F9B /* AppDelegate.swift */,
+				EC55F7A8EAD690B888050DB9 /* Info.plist */,
+				6A66FB4832C5F34D4401A9AE /* WhisperClone.entitlements */,
+				F95999924501E9E91B4283D2 /* WhisperCloneApp.swift */,
+				468215C18175683AD67F3AFB /* Audio */,
+				A7B7392560E22EBFAD2B3A88 /* Permissions */,
+				21C26DD3A5A20A0F10E18CBA /* Sidecar */,
+				47457A4FC5FDA228EB2C68DD /* StatusBar */,
+			);
+			path = WhisperClone;
+			sourceTree = "<group>";
+		};
+		7100C9A8A2D969B65CCBB98C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BD26AE0598575A062FBC9DD1 /* WhisperClone.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A7B7392560E22EBFAD2B3A88 /* Permissions */ = {
+			isa = PBXGroup;
+			children = (
+				58E4204A4569EA42998D5F3F /* PermissionsHelper.swift */,
+			);
+			path = Permissions;
+			sourceTree = "<group>";
+		};
+		EDF83CB0C03B76962608EC34 = {
+			isa = PBXGroup;
+			children = (
+				6C269D58004D516720552038 /* WhisperClone */,
+				7100C9A8A2D969B65CCBB98C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1E4F4CE0DC57CDE926F302AF /* WhisperClone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4DFE319F215A9E7BF14D1B99 /* Build configuration list for PBXNativeTarget "WhisperClone" */;
+			buildPhases = (
+				DE464C16D2CB550027D84B25 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WhisperClone;
+			packageProductDependencies = (
+			);
+			productName = WhisperClone;
+			productReference = BD26AE0598575A062FBC9DD1 /* WhisperClone.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9A1CD389AB8BAABB6798DAAF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					1E4F4CE0DC57CDE926F302AF = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 38D1517C4A1C1865592F9E99 /* Build configuration list for PBXProject "WhisperClone" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = EDF83CB0C03B76962608EC34;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 7100C9A8A2D969B65CCBB98C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1E4F4CE0DC57CDE926F302AF /* WhisperClone */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DE464C16D2CB550027D84B25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B3CA0E27CC63706C526F7B2 /* AppDelegate.swift in Sources */,
+				B0031B80138873E45B30E292 /* AppState.swift in Sources */,
+				29A4A3D44DD1E2AE7DDAD0A3 /* AudioConstants.swift in Sources */,
+				9363F68138FF9D6315F2953C /* AudioRecorder.swift in Sources */,
+				70F6B21AD4133179C53F6D06 /* PermissionsHelper.swift in Sources */,
+				086BEEA904DBE31E496BB265 /* SidecarClient.swift in Sources */,
+				FC2ACC5AE567E7900D09B562 /* SidecarPaths.swift in Sources */,
+				488B51D57EFEA493D2C60B85 /* SidecarProcessManager.swift in Sources */,
+				BF6F12572C5AA452ABFE4FAF /* StatusItemController.swift in Sources */,
+				5AA9924D98BE17F2A4FE2579 /* WhisperCloneApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		29342A5C8DD809657A676D5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2AC9CFB59652A0905F21BC6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C9D66C9F4A6E99214390283B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WhisperClone/WhisperClone.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = WhisperClone/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lauronjohn.WhisperClone;
+				PRODUCT_NAME = WhisperClone;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		D2FEE7804D6BF1A66D28FEAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WhisperClone/WhisperClone.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = WhisperClone/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lauronjohn.WhisperClone;
+				PRODUCT_NAME = WhisperClone;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		38D1517C4A1C1865592F9E99 /* Build configuration list for PBXProject "WhisperClone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				29342A5C8DD809657A676D5C /* Debug */,
+				2AC9CFB59652A0905F21BC6C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4DFE319F215A9E7BF14D1B99 /* Build configuration list for PBXNativeTarget "WhisperClone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9D66C9F4A6E99214390283B /* Debug */,
+				D2FEE7804D6BF1A66D28FEAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9A1CD389AB8BAABB6798DAAF /* Project object */;
+}
