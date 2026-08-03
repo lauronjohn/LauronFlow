@@ -21,6 +21,6 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>WhisperClone needs microphone access to transcribe your speech.</string>
+	<string>LauronFlow needs microphone access to transcribe your speech.</string>
 </dict>
 </plist>

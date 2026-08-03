@@ -29,17 +29,25 @@ final class StatusItemController {
         }
     }
 
+    /// Idle/recording use the custom brand glyph (derived from the LauronFlow logo);
+    /// transcribing/error stay as system symbols since they're transient/rare states
+    /// where a universally recognized icon matters more than brand consistency.
     private static func image(for state: AppState) -> NSImage? {
-        let symbolName: String
         switch state {
-        case .idle: symbolName = "mic"
-        case .recording: symbolName = "mic.fill"
-        case .transcribing: symbolName = "waveform"
-        case .error: symbolName = "exclamationmark.triangle"
+        case .idle:
+            let image = NSImage(named: "MenuGlyph")
+            image?.isTemplate = true
+            return image
+        case .recording:
+            // Not a template — keeps its red fill regardless of menu bar appearance,
+            // so "recording" reads as an obvious color change, not just a shape change.
+            return NSImage(named: "MenuGlyphRecording")
+        case .transcribing, .error:
+            let symbolName = state == .transcribing ? "waveform" : "exclamationmark.triangle"
+            let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "LauronFlow")
+            image?.isTemplate = true
+            return image
         }
-        let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "WhisperClone")
-        image?.isTemplate = true
-        return image
     }
 
     private func buildMenu() -> NSMenu {
@@ -60,7 +68,7 @@ final class StatusItemController {
         menu.addItem(.separator())
 
         menu.addItem(NSMenuItem(
-            title: "Quit WhisperClone",
+            title: "Quit LauronFlow",
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         ))

@@ -1,0 +1,416 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0D92C422558F0DF84B1D7505 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3912599BAC8005ACDEC1BB34 /* AppState.swift */; };
+		1DCF8ADF3BF13C2E05307BFC /* SidecarClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFABAF788E123215E5AD7B66 /* SidecarClient.swift */; };
+		1DFDFF524F894904CA42D288 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E1BE584F23B5C798963FE3 /* AppDelegate.swift */; };
+		496B714541181FDF148D5FE7 /* SidecarProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */; };
+		4AF8E30175C767F449640BFE /* LauronFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B878CFC778B40D8D0ACBC86 /* LauronFlowApp.swift */; };
+		63F945D4D3D0479A00238CD8 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0006A3DC4A779CA9F7722007 /* StatusItemController.swift */; };
+		8C0DA12C9747B3D0572E86A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66F68A984336CF6FC8ACDF69 /* Assets.xcassets */; };
+		9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */; };
+		AB49009D5E984F86D9F53E42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01186D00103B57E9507E9A21 /* HotkeyManager.swift */; };
+		E4EE99BCBD6F119652EC7075 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E197DA71A5C9E1BF1388EA1 /* LaunchAtLoginManager.swift */; };
+		E68859F4CE8D4A6A1DB9CA61 /* PermissionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDBCA2DB28BA655E5C9824F /* PermissionsHelper.swift */; };
+		E7272BE046AEFB87F585CF56 /* AudioConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7668B5B1042C60623B7A3BD6 /* AudioConstants.swift */; };
+		EAB15F9DC8D5CFFCE3254DF2 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119B5F7B16BA477B57457735 /* AudioRecorder.swift */; };
+		FD0C9A2BA4131EE8EE918D8D /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735DF49980CD064FE58CAB32 /* TextInjector.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0006A3DC4A779CA9F7722007 /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
+		01186D00103B57E9507E9A21 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		119B5F7B16BA477B57457735 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		1B878CFC778B40D8D0ACBC86 /* LauronFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauronFlowApp.swift; sourceTree = "<group>"; };
+		2E197DA71A5C9E1BF1388EA1 /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginManager.swift; sourceTree = "<group>"; };
+		2FDBCA2DB28BA655E5C9824F /* PermissionsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsHelper.swift; sourceTree = "<group>"; };
+		3912599BAC8005ACDEC1BB34 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		66F68A984336CF6FC8ACDF69 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		735DF49980CD064FE58CAB32 /* TextInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInjector.swift; sourceTree = "<group>"; };
+		7668B5B1042C60623B7A3BD6 /* AudioConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConstants.swift; sourceTree = "<group>"; };
+		95E1BE584F23B5C798963FE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		99E47E054E085D0B07CE9C9E /* LauronFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LauronFlow.entitlements; sourceTree = "<group>"; };
+		BA3F23292756B7A79A27B8B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarProcessManager.swift; sourceTree = "<group>"; };
+		F0BD69C800D9B90F17D04AFC /* LauronFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LauronFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarPaths.swift; sourceTree = "<group>"; };
+		FFABAF788E123215E5AD7B66 /* SidecarClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarClient.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2F035E7D498C298A69690D98 /* Startup */ = {
+			isa = PBXGroup;
+			children = (
+				2E197DA71A5C9E1BF1388EA1 /* LaunchAtLoginManager.swift */,
+			);
+			path = Startup;
+			sourceTree = "<group>";
+		};
+		4D41F30E210A28B484BC38C9 /* TextInjection */ = {
+			isa = PBXGroup;
+			children = (
+				735DF49980CD064FE58CAB32 /* TextInjector.swift */,
+			);
+			path = TextInjection;
+			sourceTree = "<group>";
+		};
+		5EA029D658D4410805E66C13 /* LauronFlow */ = {
+			isa = PBXGroup;
+			children = (
+				95E1BE584F23B5C798963FE3 /* AppDelegate.swift */,
+				66F68A984336CF6FC8ACDF69 /* Assets.xcassets */,
+				BA3F23292756B7A79A27B8B2 /* Info.plist */,
+				99E47E054E085D0B07CE9C9E /* LauronFlow.entitlements */,
+				1B878CFC778B40D8D0ACBC86 /* LauronFlowApp.swift */,
+				81BFD24F92CD4084F70A1818 /* Audio */,
+				6B9F59F56EFBFD5A34EE3114 /* Hotkey */,
+				F8D1658C8317C0F34B2BE63A /* Permissions */,
+				6D1981F252217A41E00DF27B /* Sidecar */,
+				2F035E7D498C298A69690D98 /* Startup */,
+				92D5109CDEB8EF0C7D6AAE0C /* StatusBar */,
+				4D41F30E210A28B484BC38C9 /* TextInjection */,
+			);
+			path = LauronFlow;
+			sourceTree = "<group>";
+		};
+		6B9F59F56EFBFD5A34EE3114 /* Hotkey */ = {
+			isa = PBXGroup;
+			children = (
+				01186D00103B57E9507E9A21 /* HotkeyManager.swift */,
+			);
+			path = Hotkey;
+			sourceTree = "<group>";
+		};
+		6D1981F252217A41E00DF27B /* Sidecar */ = {
+			isa = PBXGroup;
+			children = (
+				FFABAF788E123215E5AD7B66 /* SidecarClient.swift */,
+				FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */,
+				C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */,
+			);
+			path = Sidecar;
+			sourceTree = "<group>";
+		};
+		78AF95D4D4167F91DE246EB4 = {
+			isa = PBXGroup;
+			children = (
+				5EA029D658D4410805E66C13 /* LauronFlow */,
+				F6636267C3A3E5082E8669B5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		81BFD24F92CD4084F70A1818 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				7668B5B1042C60623B7A3BD6 /* AudioConstants.swift */,
+				119B5F7B16BA477B57457735 /* AudioRecorder.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		92D5109CDEB8EF0C7D6AAE0C /* StatusBar */ = {
+			isa = PBXGroup;
+			children = (
+				3912599BAC8005ACDEC1BB34 /* AppState.swift */,
+				0006A3DC4A779CA9F7722007 /* StatusItemController.swift */,
+			);
+			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		F6636267C3A3E5082E8669B5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0BD69C800D9B90F17D04AFC /* LauronFlow.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F8D1658C8317C0F34B2BE63A /* Permissions */ = {
+			isa = PBXGroup;
+			children = (
+				2FDBCA2DB28BA655E5C9824F /* PermissionsHelper.swift */,
+			);
+			path = Permissions;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5BBE1D6026581D46B14661C4 /* LauronFlow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCDA22DBAC8ECF092B9E64E8 /* Build configuration list for PBXNativeTarget "LauronFlow" */;
+			buildPhases = (
+				FF560C4ECFE75426E3E3A4D0 /* Sources */,
+				A2BA003E2520BFD20299B920 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LauronFlow;
+			packageProductDependencies = (
+			);
+			productName = LauronFlow;
+			productReference = F0BD69C800D9B90F17D04AFC /* LauronFlow.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A52C74BA21681511D5674EC7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					5BBE1D6026581D46B14661C4 = {
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 31EA14A618E695779E4CD536 /* Build configuration list for PBXProject "LauronFlow" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 78AF95D4D4167F91DE246EB4;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F6636267C3A3E5082E8669B5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5BBE1D6026581D46B14661C4 /* LauronFlow */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A2BA003E2520BFD20299B920 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C0DA12C9747B3D0572E86A4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FF560C4ECFE75426E3E3A4D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DFDFF524F894904CA42D288 /* AppDelegate.swift in Sources */,
+				0D92C422558F0DF84B1D7505 /* AppState.swift in Sources */,
+				E7272BE046AEFB87F585CF56 /* AudioConstants.swift in Sources */,
+				EAB15F9DC8D5CFFCE3254DF2 /* AudioRecorder.swift in Sources */,
+				AB49009D5E984F86D9F53E42 /* HotkeyManager.swift in Sources */,
+				E4EE99BCBD6F119652EC7075 /* LaunchAtLoginManager.swift in Sources */,
+				4AF8E30175C767F449640BFE /* LauronFlowApp.swift in Sources */,
+				E68859F4CE8D4A6A1DB9CA61 /* PermissionsHelper.swift in Sources */,
+				1DCF8ADF3BF13C2E05307BFC /* SidecarClient.swift in Sources */,
+				9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */,
+				496B714541181FDF148D5FE7 /* SidecarProcessManager.swift in Sources */,
+				63F945D4D3D0479A00238CD8 /* StatusItemController.swift in Sources */,
+				FD0C9A2BA4131EE8EE918D8D /* TextInjector.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		190EF1FB0C865B8B90A073D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LauronFlow/LauronFlow.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LauronFlow/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lauronjohn.LauronFlow;
+				PRODUCT_NAME = LauronFlow;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		535BF7CF2A7AB574524AEA0E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LauronFlow/LauronFlow.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LauronFlow/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lauronjohn.LauronFlow;
+				PRODUCT_NAME = LauronFlow;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5FD65DE7C76FC7BFAED3C01D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "LauronFlow Local Dev";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		9D43BB34F4211F1F589468ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "LauronFlow Local Dev";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		31EA14A618E695779E4CD536 /* Build configuration list for PBXProject "LauronFlow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D43BB34F4211F1F589468ED /* Debug */,
+				5FD65DE7C76FC7BFAED3C01D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DCDA22DBAC8ECF092B9E64E8 /* Build configuration list for PBXNativeTarget "LauronFlow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				535BF7CF2A7AB574524AEA0E /* Debug */,
+				190EF1FB0C865B8B90A073D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A52C74BA21681511D5674EC7 /* Project object */;
+}

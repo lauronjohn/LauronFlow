@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct WhisperCloneApp: App {
+struct LauronFlowApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {

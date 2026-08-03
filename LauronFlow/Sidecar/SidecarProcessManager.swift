@@ -2,7 +2,7 @@ import Foundation
 
 final class SidecarProcessManager {
     private var process: Process?
-    private let queue = DispatchQueue(label: "com.lauronjohn.WhisperClone.sidecar")
+    private let queue = DispatchQueue(label: "com.lauronjohn.LauronFlow.sidecar")
     var onCrash: ((String) -> Void)?
 
     // Crash auto-restart (M6): retry a small, capped number of times with a short
@@ -62,7 +62,7 @@ final class SidecarProcessManager {
 
         let task = Process()
         task.executableURL = uv
-        task.arguments = ["run", "python", "-m", "whisperclone_sidecar"]
+        task.arguments = ["run", "python", "-m", "lauronflow_sidecar"]
         task.currentDirectoryURL = SidecarPaths.sidecarProjectDirectory
 
         var env = ProcessInfo.processInfo.environment

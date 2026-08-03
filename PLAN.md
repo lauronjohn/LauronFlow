@@ -1,4 +1,4 @@
-# WhisperClone — local Wispr Flow-style dictation for macOS
+# LauronFlow — local Wispr Flow-style dictation for macOS
 
 ## Context
 
@@ -13,19 +13,20 @@ Confirmed decisions (not up for re-litigation during implementation):
 - Native Swift/SwiftUI menu bar app for hotkey + recording + text injection + UI.
 - Since Parakeet has no mature Swift/MLX-Swift port, the Swift app talks to a bundled
   local Python sidecar process over a Unix domain socket.
-- Personal use only — local "sign to run locally" is fine, no paid Apple Developer account,
-  App Sandbox disabled (needed to spawn the sidecar subprocess and post synthetic CGEvents).
+- Personal use only — a stable local self-signed code-signing certificate is used (so TCC
+  permission grants survive rebuilds), no paid Apple Developer account, App Sandbox
+  disabled (needed to spawn the sidecar subprocess and post synthetic CGEvents).
 
 ## Project layout
 
 ```
-whisperflow-clone/
-├── WhisperClone.xcodeproj/            # Xcode app target (not raw SwiftPM exe — see rationale below)
-├── WhisperClone/
-│   ├── WhisperCloneApp.swift          # @main, no WindowGroup (menu bar only)
+LauronFlow/
+├── LauronFlow.xcodeproj/              # Xcode app target (not raw SwiftPM exe — see rationale below)
+├── LauronFlow/
+│   ├── LauronFlowApp.swift            # @main, no WindowGroup (menu bar only)
 │   ├── AppDelegate.swift              # wires hotkey + recorder + sidecar client + text injector
 │   ├── Info.plist                     # LSUIElement=YES, NSMicrophoneUsageDescription
-│   ├── WhisperClone.entitlements      # App Sandbox = NO
+│   ├── LauronFlow.entitlements        # App Sandbox = NO
 │   ├── StatusBar/
 │   │   ├── StatusItemController.swift # NSStatusItem, menu, icon per AppState
 │   │   └── AppState.swift             # idle / recording / transcribing / error
@@ -40,11 +41,13 @@ whisperflow-clone/
 │   │   └── SidecarPaths.swift         # shared socket/log/tmp path constants
 │   ├── TextInjection/
 │   │   └── TextInjector.swift         # pasteboard swap + synthetic Cmd+V via CGEvent
-│   └── Permissions/
-│       └── PermissionsHelper.swift    # AXIsProcessTrustedWithOptions, mic permission
+│   ├── Permissions/
+│   │   └── PermissionsHelper.swift    # AXIsProcessTrustedWithOptions, mic permission
+│   └── Startup/
+│       └── LaunchAtLoginManager.swift # SMAppService wrapper
 └── sidecar/                           # independent uv-managed Python project
     ├── pyproject.toml                 # dep: parakeet-mlx  (ffmpeg via brew, not pip)
-    └── src/whisperclone_sidecar/
+    └── src/lauronflow_sidecar/
         ├── __main__.py                # loads model once, starts server
         ├── model.py                   # from_pretrained("mlx-community/parakeet-tdt-0.6b-v3")
         ├── server.py                  # UnixStreamServer, newline-delimited JSON protocol
@@ -57,7 +60,7 @@ bundle identifier/code signature of an actual `.app`. Xcode gives this for free.
 
 ## Sidecar protocol
 
-- Socket: `~/Library/Application Support/WhisperClone/sidecar.sock` (path passed to the
+- Socket: `~/Library/Application Support/LauronFlow/sidecar.sock` (path passed to the
   Python process via env var so Swift owns the single source of truth).
 - Model loaded once at process startup (multi-second load — must not repeat per utterance).
 - Per utterance: Swift opens a new connection, writes `<absolute WAV path>\n`, sidecar
@@ -93,9 +96,15 @@ bundle identifier/code signature of an actual `.app`. Xcode gives this for free.
   PATH) — check `/opt/homebrew/bin/uv`, `/usr/local/bin/uv`, `~/.local/bin/uv`, etc.
 - **Gotcha:** `uv`'s editable installs set the macOS `UF_HIDDEN` flag on the generated
   `.pth`/`dist-info` in `.venv`, and this Python 3.11 build's `site.py` silently skips
-  hidden `.pth` files — so `whisperclone_sidecar` fails to import unless installed
+  hidden `.pth` files — so `lauronflow_sidecar` fails to import unless installed
   non-editable. `SidecarProcessManager` MUST set `UV_NO_EDITABLE=1` in the environment
   it passes to the `uv run` subprocess (confirmed working in M1/M2 testing).
+- **Gotcha:** ad-hoc "Sign to Run Locally" signing (`CODE_SIGN_IDENTITY: "-"`) hashes the
+  binary itself, so every rebuild produces a new signing identity and macOS resets all TCC
+  grants (Accessibility, Microphone) for the app — extremely disruptive during active
+  development. Fixed by signing with a persistent local self-signed "Code Signing"
+  certificate (created once via Keychain Access' Certificate Assistant) instead, which
+  keeps the same identity across rebuilds.
 
 ## Milestones (each independently testable)
 
@@ -114,6 +123,8 @@ bundle identifier/code signature of an actual `.app`. Xcode gives this for free.
    sidecar crash auto-restart with retry cap, silence/empty-transcript handling, sidecar
    launched proactively at app startup (not lazily), optional "Launch at Login" via
    `SMAppService`.
+
+All six milestones above are done and verified live on-device.
 
 ## Verification
 

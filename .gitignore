@@ -12,5 +12,5 @@ DerivedData/
 
 # Python sidecar is its own independent git repo — don't track its contents here
 # (leading slash + exact case needed: macOS's case-insensitive FS would otherwise
-# also match WhisperClone/Sidecar/, the Swift sidecar-client code)
+# also match LauronFlow/Sidecar/, the Swift sidecar-client code)
 /sidecar/

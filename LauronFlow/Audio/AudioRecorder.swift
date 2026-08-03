@@ -18,7 +18,7 @@ final class AudioRecorder {
     @discardableResult
     func start() throws -> URL {
         let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("whisperclone-\(UUID().uuidString).wav")
+            .appendingPathComponent("lauronflow-\(UUID().uuidString).wav")
 
         let inputNode = engine.inputNode
         let inputFormat = inputNode.outputFormat(forBus: 0)

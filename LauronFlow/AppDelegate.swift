@@ -3,7 +3,7 @@ import Carbon.HIToolbox
 import Foundation
 import os
 
-private let logger = Logger(subsystem: "com.lauronjohn.WhisperClone", category: "transcription")
+private let logger = Logger(subsystem: "com.lauronjohn.LauronFlow", category: "transcription")
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItemController: StatusItemController!

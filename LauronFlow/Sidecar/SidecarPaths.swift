@@ -1,11 +1,11 @@
 import Foundation
 
 enum SidecarPaths {
-    static let socketEnvVar = "WHISPERCLONE_SOCKET_PATH"
+    static let socketEnvVar = "LAURONFLOW_SOCKET_PATH"
 
     static var supportDirectory: URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return base.appendingPathComponent("WhisperClone", isDirectory: true)
+        return base.appendingPathComponent("LauronFlow", isDirectory: true)
     }
 
     static var socketURL: URL {
@@ -20,7 +20,7 @@ enum SidecarPaths {
     /// Python project living alongside the Xcode project, not embedded in
     /// the app bundle. Update this if the checkout moves.
     static var sidecarProjectDirectory: URL {
-        URL(fileURLWithPath: "/Users/johnlauron/Desktop/whisperflow-clone/sidecar")
+        URL(fileURLWithPath: "/Users/johnlauron/Desktop/LauronFlow/sidecar")
     }
 
     static func resolveUvExecutable() -> URL? {
