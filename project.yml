@@ -1,0 +1,32 @@
+name: WhisperClone
+options:
+  bundleIdPrefix: com.lauronjohn
+  deploymentTarget:
+    macOS: "14.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "-"
+    ENABLE_HARDENED_RUNTIME: NO
+targets:
+  WhisperClone:
+    type: application
+    platform: macOS
+    sources:
+      - path: WhisperClone
+    info:
+      path: WhisperClone/Info.plist
+      properties:
+        LSUIElement: YES
+        NSMicrophoneUsageDescription: "WhisperClone needs microphone access to transcribe your speech."
+    entitlements:
+      path: WhisperClone/WhisperClone.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lauronjohn.WhisperClone
+        PRODUCT_NAME: WhisperClone
+        INFOPLIST_KEY_LSUIElement: YES

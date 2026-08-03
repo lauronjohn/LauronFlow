@@ -1,0 +1,14 @@
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.build/
+
+# Swift Package Manager
+.swiftpm/
+
+# macOS
+.DS_Store
+
+# Python sidecar is its own independent git repo — don't track its contents here
+sidecar/
