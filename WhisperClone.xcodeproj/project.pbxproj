@@ -17,6 +17,7 @@
 		B0031B80138873E45B30E292 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD09F48BA53735F6EFD6F220 /* AppState.swift */; };
 		B98AF3CBFA56F573044CC9F7 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104FB0E2AC5C6C8D38FE6D6E /* HotkeyManager.swift */; };
 		BF6F12572C5AA452ABFE4FAF /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A67671A0BB1565253A1DDA /* StatusItemController.swift */; };
+		F24DA81323D624347B4853C6 /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C6C1E21564246980C5A286 /* TextInjector.swift */; };
 		FC2ACC5AE567E7900D09B562 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0CACC941EAA10BBBCA1A55 /* SidecarPaths.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		D2EF04C98D42CCA43B92ADF7 /* AudioConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConstants.swift; sourceTree = "<group>"; };
 		EC55F7A8EAD690B888050DB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EF7F623AF71C00B0D43850B8 /* SidecarProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarProcessManager.swift; sourceTree = "<group>"; };
+		F7C6C1E21564246980C5A286 /* TextInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInjector.swift; sourceTree = "<group>"; };
 		F95999924501E9E91B4283D2 /* WhisperCloneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperCloneApp.swift; sourceTree = "<group>"; };
 		FD09F48BA53735F6EFD6F220 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,6 +80,7 @@
 				A7B7392560E22EBFAD2B3A88 /* Permissions */,
 				21C26DD3A5A20A0F10E18CBA /* Sidecar */,
 				47457A4FC5FDA228EB2C68DD /* StatusBar */,
+				EFB2CBCD7D01DFA9BEF9BCFB /* TextInjection */,
 			);
 			path = WhisperClone;
 			sourceTree = "<group>";
@@ -112,6 +115,14 @@
 				6C269D58004D516720552038 /* WhisperClone */,
 				7100C9A8A2D969B65CCBB98C /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		EFB2CBCD7D01DFA9BEF9BCFB /* TextInjection */ = {
+			isa = PBXGroup;
+			children = (
+				F7C6C1E21564246980C5A286 /* TextInjector.swift */,
+			);
+			path = TextInjection;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -182,6 +193,7 @@
 				FC2ACC5AE567E7900D09B562 /* SidecarPaths.swift in Sources */,
 				488B51D57EFEA493D2C60B85 /* SidecarProcessManager.swift in Sources */,
 				BF6F12572C5AA452ABFE4FAF /* StatusItemController.swift in Sources */,
+				F24DA81323D624347B4853C6 /* TextInjector.swift in Sources */,
 				5AA9924D98BE17F2A4FE2579 /* WhisperCloneApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

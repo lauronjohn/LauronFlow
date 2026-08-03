@@ -1,4 +1,5 @@
 import AppKit
+import Carbon.HIToolbox
 import Foundation
 import os
 
@@ -10,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let sidecarClient = SidecarClient()
     private let audioRecorder = AudioRecorder()
     private let hotkeyManager = HotkeyManager()
+    private let textInjector = TextInjector()
     private var accessibilityObserverTimer: Timer?
     private var isBusy = false
     private var currentRecordingURL: URL?
@@ -106,6 +108,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Types `text` into whatever has focus. Must be called on the main thread.
+    /// Injection depends on Accessibility trust (same permission the hotkey needs) — without it
+    /// a synthetic Cmd+V is silently ignored by the system, which would otherwise look like a
+    /// dead end with no explanation, so that's checked explicitly here. Also skips while macOS's
+    /// system-wide secure input mode is active (e.g. a password field has focus) since synthetic
+    /// keyboard events are blocked from reaching secure fields by design.
+    private func injectTranscript(_ text: String) {
+        guard PermissionsHelper.isAccessibilityTrusted else {
+            statusItemController.setState(.error(
+                "Transcribed but couldn't type it — Accessibility permission required. Grant it in System Settings > Privacy & Security > Accessibility."
+            ))
+            return
+        }
+        guard !IsSecureEventInputEnabled() else {
+            statusItemController.setState(.error("Transcribed but couldn't type it — a secure input field (e.g. a password field) has focus."))
+            return
+        }
+
+        textInjector.inject(text)
+        statusItemController.setState(.idle)
+    }
+
     private func finishRecordingAndTranscribe() {
         guard isBusy, let wavURL = currentRecordingURL else { return }
         currentRecordingURL = nil
@@ -119,7 +143,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 let text = try self.sidecarClient.transcribe(wavPath: wavURL)
                 logger.notice("Transcript: \(text, privacy: .public)")
                 DispatchQueue.main.async {
-                    self.statusItemController.setState(.idle)
+                    self.injectTranscript(text)
                     self.isBusy = false
                 }
             } catch {
