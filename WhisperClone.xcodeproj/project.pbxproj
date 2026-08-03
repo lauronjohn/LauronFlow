@@ -15,12 +15,14 @@
 		70F6B21AD4133179C53F6D06 /* PermissionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E4204A4569EA42998D5F3F /* PermissionsHelper.swift */; };
 		9363F68138FF9D6315F2953C /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0405810FE3C318500B2EC0 /* AudioRecorder.swift */; };
 		B0031B80138873E45B30E292 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD09F48BA53735F6EFD6F220 /* AppState.swift */; };
+		B98AF3CBFA56F573044CC9F7 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104FB0E2AC5C6C8D38FE6D6E /* HotkeyManager.swift */; };
 		BF6F12572C5AA452ABFE4FAF /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A67671A0BB1565253A1DDA /* StatusItemController.swift */; };
 		FC2ACC5AE567E7900D09B562 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0CACC941EAA10BBBCA1A55 /* SidecarPaths.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0F1DBC29EFAF9E7CD10F1F9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		104FB0E2AC5C6C8D38FE6D6E /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		58E4204A4569EA42998D5F3F /* PermissionsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsHelper.swift; sourceTree = "<group>"; };
 		61A67671A0BB1565253A1DDA /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
 		6A66FB4832C5F34D4401A9AE /* WhisperClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WhisperClone.entitlements; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				6A66FB4832C5F34D4401A9AE /* WhisperClone.entitlements */,
 				F95999924501E9E91B4283D2 /* WhisperCloneApp.swift */,
 				468215C18175683AD67F3AFB /* Audio */,
+				D198B51C63CC0CE138B4FEEB /* Hotkey */,
 				A7B7392560E22EBFAD2B3A88 /* Permissions */,
 				21C26DD3A5A20A0F10E18CBA /* Sidecar */,
 				47457A4FC5FDA228EB2C68DD /* StatusBar */,
@@ -93,6 +96,14 @@
 				58E4204A4569EA42998D5F3F /* PermissionsHelper.swift */,
 			);
 			path = Permissions;
+			sourceTree = "<group>";
+		};
+		D198B51C63CC0CE138B4FEEB /* Hotkey */ = {
+			isa = PBXGroup;
+			children = (
+				104FB0E2AC5C6C8D38FE6D6E /* HotkeyManager.swift */,
+			);
+			path = Hotkey;
 			sourceTree = "<group>";
 		};
 		EDF83CB0C03B76962608EC34 = {
@@ -165,6 +176,7 @@
 				B0031B80138873E45B30E292 /* AppState.swift in Sources */,
 				29A4A3D44DD1E2AE7DDAD0A3 /* AudioConstants.swift in Sources */,
 				9363F68138FF9D6315F2953C /* AudioRecorder.swift in Sources */,
+				B98AF3CBFA56F573044CC9F7 /* HotkeyManager.swift in Sources */,
 				70F6B21AD4133179C53F6D06 /* PermissionsHelper.swift in Sources */,
 				086BEEA904DBE31E496BB265 /* SidecarClient.swift in Sources */,
 				FC2ACC5AE567E7900D09B562 /* SidecarPaths.swift in Sources */,

@@ -1,12 +1,18 @@
 import AppKit
 import Foundation
+import os
+
+private let logger = Logger(subsystem: "com.lauronjohn.WhisperClone", category: "transcription")
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItemController: StatusItemController!
     private let sidecarManager = SidecarProcessManager()
     private let sidecarClient = SidecarClient()
     private let audioRecorder = AudioRecorder()
+    private let hotkeyManager = HotkeyManager()
+    private var accessibilityObserverTimer: Timer?
     private var isBusy = false
+    private var currentRecordingURL: URL?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItemController = StatusItemController()
@@ -21,44 +27,88 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         sidecarManager.start()
 
-        PermissionsHelper.requestMicrophoneAccess { granted in
-            if !granted {
-                NSLog("Microphone access not granted; recording will fail until enabled in System Settings.")
+        hotkeyManager.onHotkeyDown = { [weak self] in
+            DispatchQueue.main.async {
+                _ = self?.beginRecording()
             }
         }
+        hotkeyManager.onHotkeyUp = { [weak self] in
+            DispatchQueue.main.async {
+                self?.finishRecordingAndTranscribe()
+            }
+        }
+
+        PermissionsHelper.requestMicrophoneAccess { granted in
+            if !granted {
+                logger.error("Microphone access not granted; recording will fail until enabled in System Settings.")
+            }
+        }
+
         PermissionsHelper.requestAccessibilityAccess()
+        accessibilityObserverTimer = PermissionsHelper.observeAccessibilityTrust { [weak self] trusted in
+            self?.handleAccessibilityTrustChange(trusted)
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        accessibilityObserverTimer?.invalidate()
+        hotkeyManager.stop()
         sidecarManager.stop()
     }
 
+    private func handleAccessibilityTrustChange(_ trusted: Bool) {
+        if trusted {
+            hotkeyManager.start()
+            if !isBusy {
+                statusItemController.setState(.idle)
+            }
+        } else {
+            hotkeyManager.stop()
+            if !isBusy {
+                statusItemController.setState(.error(
+                    "Accessibility permission required for the push-to-talk hotkey — grant it in System Settings > Privacy & Security > Accessibility."
+                ))
+            }
+        }
+    }
+
     private func runTestTranscription() {
-        guard !isBusy else { return }
+        guard beginRecording() else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            self?.finishRecordingAndTranscribe()
+        }
+    }
+
+    /// Starts a recording. Returns whether it actually started (false if already busy, the
+    /// sidecar isn't ready, or the audio engine failed to start) so callers can decide whether
+    /// to expect a matching finish. Shared by both the manual "Test Transcription" menu item
+    /// (fixed 3s duration) and the push-to-talk hotkey (duration = how long the key is held).
+    @discardableResult
+    private func beginRecording() -> Bool {
+        guard !isBusy else { return false }
         guard FileManager.default.fileExists(atPath: SidecarPaths.socketURL.path) else {
             statusItemController.setState(.error("Sidecar still starting up — try again in a few seconds."))
-            return
+            return false
         }
 
         isBusy = true
         statusItemController.setState(.recording)
 
-        let wavURL: URL
         do {
-            wavURL = try audioRecorder.start()
+            currentRecordingURL = try audioRecorder.start()
+            return true
         } catch {
-            NSLog("Failed to start recording: \(error)")
+            logger.error("Failed to start recording: \(String(describing: error), privacy: .public)")
             statusItemController.setState(.error("\(error)"))
             isBusy = false
-            return
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-            self?.finishTestTranscription(wavURL: wavURL)
+            currentRecordingURL = nil
+            return false
         }
     }
 
-    private func finishTestTranscription(wavURL: URL) {
+    private func finishRecordingAndTranscribe() {
+        guard isBusy, let wavURL = currentRecordingURL else { return }
+        currentRecordingURL = nil
         audioRecorder.stop()
         statusItemController.setState(.transcribing)
 
@@ -67,13 +117,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             defer { try? FileManager.default.removeItem(at: wavURL) }
             do {
                 let text = try self.sidecarClient.transcribe(wavPath: wavURL)
-                NSLog("Transcript: \(text)")
+                logger.notice("Transcript: \(text, privacy: .public)")
                 DispatchQueue.main.async {
                     self.statusItemController.setState(.idle)
                     self.isBusy = false
                 }
             } catch {
-                NSLog("Transcription failed: \(error)")
+                logger.error("Transcription failed: \(String(describing: error), privacy: .public)")
                 DispatchQueue.main.async {
                     self.statusItemController.setState(.error("\(error)"))
                     self.isBusy = false

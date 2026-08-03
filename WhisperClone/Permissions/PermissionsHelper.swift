@@ -30,4 +30,23 @@ enum PermissionsHelper {
         let options: NSDictionary = [key: true]
         AXIsProcessTrustedWithOptions(options)
     }
+
+    /// Polls `isAccessibilityTrusted` since macOS gives no callback for grant/revoke while the
+    /// app is running. Fires `onChange` immediately with the current value, then again only when
+    /// the value flips (edge-triggered), so the caller can start/stop the hotkey monitor in
+    /// response to the user granting or revoking Accessibility access in System Settings.
+    @discardableResult
+    static func observeAccessibilityTrust(interval: TimeInterval = 2.0, onChange: @escaping (Bool) -> Void) -> Timer {
+        var lastValue = isAccessibilityTrusted
+        onChange(lastValue)
+
+        let timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            let currentValue = isAccessibilityTrusted
+            guard currentValue != lastValue else { return }
+            lastValue = currentValue
+            onChange(currentValue)
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        return timer
+    }
 }
