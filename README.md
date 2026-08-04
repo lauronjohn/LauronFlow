@@ -34,8 +34,9 @@ so there's no separate repo to clone.
    ```
    brew install uv ffmpeg
    ```
-4. Launch LauronFlow from `/Applications`. First launch downloads the ~600MB Parakeet
-   model from Hugging Face, so it can take a minute and needs internet the first time.
+4. Launch LauronFlow from `/Applications`. First launch downloads the ~2.3GB Parakeet
+   model from Hugging Face, so it needs internet and can take a few minutes — the menu
+   bar icon and its dropdown show live download progress while that happens.
 5. Grant permissions when prompted: **Microphone** and **Accessibility** (System
    Settings → Privacy & Security). Accessibility is required for typing the transcript
    into other apps — without it LauronFlow can transcribe but can't inject text.

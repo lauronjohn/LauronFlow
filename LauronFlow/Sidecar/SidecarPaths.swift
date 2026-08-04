@@ -2,6 +2,7 @@ import Foundation
 
 enum SidecarPaths {
     static let socketEnvVar = "LAURONFLOW_SOCKET_PATH"
+    static let statusEnvVar = "LAURONFLOW_STATUS_PATH"
 
     static var supportDirectory: URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -10,6 +11,14 @@ enum SidecarPaths {
 
     static var socketURL: URL {
         supportDirectory.appendingPathComponent("sidecar.sock")
+    }
+
+    /// Written by the sidecar (see `model.py`'s `_write_status`) only while it's
+    /// downloading/loading the Parakeet model on a cold cache — absent on every launch
+    /// after the first, and removed once the model finishes loading. `socketURL`'s
+    /// existence remains the actual readiness signal; this is purely for progress UI.
+    static var statusURL: URL {
+        supportDirectory.appendingPathComponent("sidecar_status.json")
     }
 
     static var logURL: URL {

@@ -19,8 +19,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let licenseManager = LicenseManager()
     private lazy var settingsWindowController = SettingsWindowController(store: vocabularyStore, licenseManager: licenseManager)
     private var accessibilityObserverTimer: Timer?
+    private var sidecarStartupTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
     private var isBusy = false
+    /// True while a mic/Accessibility permission error is the reason nothing works —
+    /// takes priority over `sidecarStartupTimer`'s progress display, which would
+    /// otherwise silently overwrite that (more actionable) error every 0.5s.
+    private var isBlockedByPermissionError = false
     private var currentRecordingURL: URL?
     private var currentRecordingStartedAt: Date?
 
@@ -53,10 +58,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         sidecarManager.onCrash = { [weak self] message in
             DispatchQueue.main.async {
+                self?.sidecarStartupTimer?.invalidate()
+                self?.sidecarStartupTimer = nil
                 self?.statusItemController.setState(.error(message))
             }
         }
         sidecarManager.start()
+        startSidecarStartupPolling()
 
         hotkeyManager.onHotkeyDown = { [weak self] in
             DispatchQueue.main.async {
@@ -85,6 +93,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         PermissionsHelper.requestMicrophoneAccess { [weak self] granted in
             if !granted {
                 logger.error("Microphone access not granted; recording will fail until enabled in System Settings.")
+                self?.isBlockedByPermissionError = true
                 self?.statusItemController.setState(.error(
                     "Microphone access denied — grant it in System Settings > Privacy & Security > Microphone."
                 ))
@@ -103,9 +112,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         accessibilityObserverTimer?.invalidate()
+        sidecarStartupTimer?.invalidate()
         hotkeyManager.stop()
         undoHotkeyManager.stop()
         sidecarManager.stop()
+    }
+
+    /// Polls for sidecar readiness (via the socket file — the real readiness signal)
+    /// and, until then, surfaces whatever the sidecar's status file reports. On every
+    /// launch after the first this resolves almost immediately, since the model is
+    /// already cached and there's no status file to read. Self-terminates once ready.
+    private func startSidecarStartupPolling() {
+        sidecarStartupTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] timer in
+            self?.pollSidecarStartupStatus(timer: timer)
+        }
+    }
+
+    private func pollSidecarStartupStatus(timer: Timer) {
+        guard !FileManager.default.fileExists(atPath: SidecarPaths.socketURL.path) else {
+            timer.invalidate()
+            sidecarStartupTimer = nil
+            if !isBusy, !isBlockedByPermissionError {
+                statusItemController.setState(.idle)
+            }
+            return
+        }
+        guard !isBusy, !isBlockedByPermissionError else { return }
+        statusItemController.setState(.starting(SidecarStatus.read()?.displayText ?? "Starting up…"))
     }
 
     /// Shown once, on the very launch that starts the trial clock (see
@@ -123,12 +156,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func handleAccessibilityTrustChange(_ trusted: Bool) {
         if trusted {
+            isBlockedByPermissionError = false
             hotkeyManager.start()
             undoHotkeyManager.start()
             if !isBusy {
                 statusItemController.setState(.idle)
             }
         } else {
+            isBlockedByPermissionError = true
             hotkeyManager.stop()
             undoHotkeyManager.stop()
             if !isBusy {
@@ -160,7 +195,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return false
         }
         guard FileManager.default.fileExists(atPath: SidecarPaths.socketURL.path) else {
-            statusItemController.setState(.error("Sidecar still starting up — try again in a few seconds."))
+            let detail = SidecarStatus.read()?.displayText ?? "Sidecar still starting up"
+            statusItemController.setState(.error("\(detail) — try again once it's ready."))
             return false
         }
 

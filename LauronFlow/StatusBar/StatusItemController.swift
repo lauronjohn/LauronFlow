@@ -4,6 +4,7 @@ final class StatusItemController {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let licenseStatusItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private let buyLicenseItem = NSMenuItem(title: "Buy License…", action: #selector(handleBuyLicense), keyEquivalent: "")
+    private let startupStatusItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     var onTestTranscription: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     var onBuyLicense: (() -> Void)?
@@ -16,10 +17,22 @@ final class StatusItemController {
     func setState(_ state: AppState) {
         statusItem.button?.image = Self.image(for: state)
 
-        if case .error(let message) = state {
+        switch state {
+        case .error(let message):
             statusItem.button?.toolTip = message
-        } else {
+        case .starting(let message):
+            statusItem.button?.toolTip = message
+        default:
             statusItem.button?.toolTip = nil
+        }
+
+        // Also surfaced as a visible (non-hover) menu row, since a tester is unlikely to
+        // think to hover the icon during what looks like an unresponsive first launch.
+        if case .starting(let message) = state {
+            startupStatusItem.title = message
+            startupStatusItem.isHidden = false
+        } else {
+            startupStatusItem.isHidden = true
         }
     }
 
@@ -50,8 +63,13 @@ final class StatusItemController {
             // Not a template — keeps its red fill regardless of menu bar appearance,
             // so "recording" reads as an obvious color change, not just a shape change.
             return NSImage(named: "MenuGlyphRecording")
-        case .transcribing, .error:
-            let symbolName = state == .transcribing ? "waveform" : "exclamationmark.triangle"
+        case .transcribing, .starting, .error:
+            let symbolName: String
+            switch state {
+            case .transcribing: symbolName = "waveform"
+            case .starting: symbolName = "arrow.down.circle"
+            default: symbolName = "exclamationmark.triangle"
+            }
             let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "LauronFlow")
             image?.isTemplate = true
             return image
@@ -78,6 +96,10 @@ final class StatusItemController {
         menu.addItem(settingsItem)
 
         menu.addItem(.separator())
+
+        startupStatusItem.isEnabled = false
+        startupStatusItem.isHidden = true
+        menu.addItem(startupStatusItem)
 
         licenseStatusItem.isEnabled = false
         menu.addItem(licenseStatusItem)

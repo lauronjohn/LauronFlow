@@ -45,6 +45,31 @@ final class SidecarProcessManager {
         return false
     }
 
+    /// `UV_NO_EDITABLE=1` (see the comment on it in `launch()`) makes `uv run` treat the
+    /// local `lauronflow-sidecar` package as static rather than auto-detecting source
+    /// changes — without this, any sidecar code update would silently keep running
+    /// whatever version was installed the first time this Mac ever launched the app,
+    /// since `sidecarVenvURL` deliberately persists across reinstalls. Cheap: this only
+    /// rebuilds our own handful of small .py files, not the heavy ML dependencies
+    /// (mlx, parakeet-mlx, etc.), which stay untouched and cached. Runs synchronously —
+    /// fine here since `launch()` already executes off the main thread on `queue`.
+    private func resyncSidecarPackage(uv: URL) {
+        let task = Process()
+        task.executableURL = uv
+        task.arguments = ["sync", "--reinstall-package", "lauronflow-sidecar"]
+        task.currentDirectoryURL = SidecarPaths.sidecarProjectDirectory
+
+        var env = ProcessInfo.processInfo.environment
+        env["UV_NO_EDITABLE"] = "1"
+        env["UV_PROJECT_ENVIRONMENT"] = SidecarPaths.sidecarVenvURL.path
+        task.environment = env
+        task.standardOutput = FileHandle.nullDevice
+        task.standardError = FileHandle.nullDevice
+
+        try? task.run()
+        task.waitUntilExit()
+    }
+
     private func launch() {
         generation += 1
         let myGeneration = generation
@@ -59,6 +84,8 @@ final class SidecarProcessManager {
             withIntermediateDirectories: true
         )
         try? FileManager.default.removeItem(at: SidecarPaths.socketURL)
+        try? FileManager.default.removeItem(at: SidecarPaths.statusURL)
+        resyncSidecarPackage(uv: uv)
 
         let task = Process()
         task.executableURL = uv
@@ -67,6 +94,7 @@ final class SidecarProcessManager {
 
         var env = ProcessInfo.processInfo.environment
         env[SidecarPaths.socketEnvVar] = SidecarPaths.socketURL.path
+        env[SidecarPaths.statusEnvVar] = SidecarPaths.statusURL.path
         // Required: uv's editable installs mark their .pth file UF_HIDDEN on this
         // machine, which this Python build's site.py silently skips, breaking the
         // import. Non-editable install sidesteps it. See PLAN.md setup prerequisites.

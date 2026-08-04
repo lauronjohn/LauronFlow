@@ -28,6 +28,7 @@
 		94DBE7AA4104A2C633816173 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733224B1B91B32F03B7C7453 /* SettingsWindowController.swift */; };
 		9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */; };
 		AB49009D5E984F86D9F53E42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01186D00103B57E9507E9A21 /* HotkeyManager.swift */; };
+		ABCF32D0BC41E235336C7399 /* SidecarStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB24E88FEA12F4A474F5116 /* SidecarStatus.swift */; };
 		DF84814077FD0267E79A1FD6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F61F26D2CB329283535C10 /* SettingsView.swift */; };
 		E4EE99BCBD6F119652EC7075 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E197DA71A5C9E1BF1388EA1 /* LaunchAtLoginManager.swift */; };
 		E68859F4CE8D4A6A1DB9CA61 /* PermissionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDBCA2DB28BA655E5C9824F /* PermissionsHelper.swift */; };
@@ -63,6 +64,7 @@
 		95E1BE584F23B5C798963FE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97AD6538DF1E9B73A032D32C /* GumroadConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GumroadConfig.swift; sourceTree = "<group>"; };
 		99E47E054E085D0B07CE9C9E /* LauronFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LauronFlow.entitlements; sourceTree = "<group>"; };
+		9FB24E88FEA12F4A474F5116 /* SidecarStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarStatus.swift; sourceTree = "<group>"; };
 		BA3F23292756B7A79A27B8B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BB0F23A529EFFBCD98B8E631 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		BCED8A7F007F8B1CA50956DA /* RecordingWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingWidgetView.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				FFABAF788E123215E5AD7B66 /* SidecarClient.swift */,
 				FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */,
 				C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */,
+				9FB24E88FEA12F4A474F5116 /* SidecarStatus.swift */,
 			);
 			path = Sidecar;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				1DCF8ADF3BF13C2E05307BFC /* SidecarClient.swift in Sources */,
 				9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */,
 				496B714541181FDF148D5FE7 /* SidecarProcessManager.swift in Sources */,
+				ABCF32D0BC41E235336C7399 /* SidecarStatus.swift in Sources */,
 				63F945D4D3D0479A00238CD8 /* StatusItemController.swift in Sources */,
 				FD0C9A2BA4131EE8EE918D8D /* TextInjector.swift in Sources */,
 				77A174CF04A8AE37DF9057C3 /* UndoHotkeyManager.swift in Sources */,
