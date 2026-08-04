@@ -21,6 +21,7 @@
 		77A174CF04A8AE37DF9057C3 /* UndoHotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC960FFCC3E84E6DB683E33 /* UndoHotkeyManager.swift */; };
 		7F2F7AA6341E89C5B0BA2E87 /* RecordingWidgetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B904F0B1827F0A462C2226 /* RecordingWidgetController.swift */; };
 		8C0DA12C9747B3D0572E86A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66F68A984336CF6FC8ACDF69 /* Assets.xcassets */; };
+		92CF941B6556A471CEAD5891 /* ShortcutsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F41BB20D7102B40F7F035A /* ShortcutsSettingsView.swift */; };
 		94DBE7AA4104A2C633816173 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733224B1B91B32F03B7C7453 /* SettingsWindowController.swift */; };
 		9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */; };
 		AB49009D5E984F86D9F53E42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01186D00103B57E9507E9A21 /* HotkeyManager.swift */; };
@@ -50,6 +51,7 @@
 		735DF49980CD064FE58CAB32 /* TextInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInjector.swift; sourceTree = "<group>"; };
 		747DAEEACA8432C0D7F33311 /* VocabularyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyEntry.swift; sourceTree = "<group>"; };
 		7668B5B1042C60623B7A3BD6 /* AudioConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConstants.swift; sourceTree = "<group>"; };
+		82F41BB20D7102B40F7F035A /* ShortcutsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsSettingsView.swift; sourceTree = "<group>"; };
 		95E1BE584F23B5C798963FE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		99E47E054E085D0B07CE9C9E /* LauronFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LauronFlow.entitlements; sourceTree = "<group>"; };
 		BA3F23292756B7A79A27B8B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				65BA9750F53920EED54DEA9D /* GeneralSettingsView.swift */,
 				49F61F26D2CB329283535C10 /* SettingsView.swift */,
 				733224B1B91B32F03B7C7453 /* SettingsWindowController.swift */,
+				82F41BB20D7102B40F7F035A /* ShortcutsSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				F2D286025311519BAE1E14A8 /* RecordingWidgetView.swift in Sources */,
 				DF84814077FD0267E79A1FD6 /* SettingsView.swift in Sources */,
 				94DBE7AA4104A2C633816173 /* SettingsWindowController.swift in Sources */,
+				92CF941B6556A471CEAD5891 /* ShortcutsSettingsView.swift in Sources */,
 				1DCF8ADF3BF13C2E05307BFC /* SidecarClient.swift in Sources */,
 				9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */,
 				496B714541181FDF148D5FE7 /* SidecarProcessManager.swift in Sources */,
