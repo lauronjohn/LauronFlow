@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="LauronFlow is a local, fully-offline voice dictation app for macOS. Hold a hotkey, speak, release. Nothing leaves your Mac. 14-day free trial, then $29 one-time." />
+<meta property="og:title" content="LauronFlow — dictation that never leaves your Mac" />
+<meta property="og:description" content="Local, offline voice dictation for Apple Silicon Macs. No cloud calls, no account, no subscription." />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/png" href="/logo.png" />
+<title>LauronFlow — dictation that never leaves your Mac</title>
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  :root {
+    --bg: #f7f3ec;
+    --bg-raised: #ffffff;
+    --bg-sunken: #efe9de;
+    --ink: #17130f;
+    --ink-muted: #6b6058;
+    --ink-faint: #948a7d;
+    --accent: #d92a1a;
+    --accent-ink: #ffffff;
+    --ok: #0f9a72;
+    --wire: rgba(23, 19, 15, 0.11);
+    --wire-strong: rgba(23, 19, 15, 0.22);
+    --shadow: 0 1px 2px rgba(23,19,15,0.06), 0 8px 24px -12px rgba(23,19,15,0.18);
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b0a09;
+      --bg-raised: #17140f;
+      --bg-sunken: #060605;
+      --ink: #f2ece1;
+      --ink-muted: #ab9f8f;
+      --ink-faint: #6d6357;
+      --accent: #ff4632;
+      --accent-ink: #100604;
+      --ok: #35d4a0;
+      --wire: rgba(242, 236, 225, 0.10);
+      --wire-strong: rgba(242, 236, 225, 0.22);
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 20px 48px -20px rgba(0,0,0,0.65);
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0b0a09;
+    --bg-raised: #17140f;
+    --bg-sunken: #060605;
+    --ink: #f2ece1;
+    --ink-muted: #ab9f8f;
+    --ink-faint: #6d6357;
+    --accent: #ff4632;
+    --accent-ink: #100604;
+    --ok: #35d4a0;
+    --wire: rgba(242, 236, 225, 0.10);
+    --wire-strong: rgba(242, 236, 225, 0.22);
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 20px 48px -20px rgba(0,0,0,0.65);
+    color-scheme: dark;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f7f3ec;
+    --bg-raised: #ffffff;
+    --bg-sunken: #efe9de;
+    --ink: #17130f;
+    --ink-muted: #6b6058;
+    --ink-faint: #948a7d;
+    --accent: #d92a1a;
+    --accent-ink: #ffffff;
+    --ok: #0f9a72;
+    --wire: rgba(23, 19, 15, 0.11);
+    --wire-strong: rgba(23, 19, 15, 0.22);
+    --shadow: 0 1px 2px rgba(23,19,15,0.06), 0 8px 24px -12px rgba(23,19,15,0.18);
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- nav ---------- */
+  nav.top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--wire);
+  }
+  nav.top .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px 28px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .brand img { width: 26px; height: 26px; border-radius: 7px; }
+  .brand b { color: var(--accent); font-weight: 700; }
+  .navlinks { display: flex; gap: 28px; font-size: 13.5px; }
+  .navlinks a {
+    text-decoration: none;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+  }
+  .navlinks a:hover { color: var(--ink); }
+  .navlinks a:focus-visible, .btn:focus-visible, .navlinks .btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  @media (max-width: 640px) { .navlinks { display: none; } }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: var(--shadow);
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--wire-strong);
+  }
+  .btn-ghost:hover { background: var(--bg-sunken); }
+
+  /* ---------- hero ---------- */
+  header.hero {
+    padding: 88px 0 56px;
+    position: relative;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  h1.headline {
+    font-family: var(--mono);
+    font-size: clamp(40px, 7vw, 78px);
+    line-height: 0.98;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 26px;
+    text-wrap: balance;
+    max-width: 15ch;
+  }
+  h1.headline .r { color: var(--accent); }
+  p.sub {
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 54ch;
+    margin: 0 0 36px;
+  }
+  p.sub code {
+    font-family: var(--mono);
+    background: var(--bg-sunken);
+    border: 1px solid var(--wire);
+    padding: 1.5px 6px;
+    border-radius: 5px;
+    font-size: 0.88em;
+    color: var(--ink);
+  }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .cta-note { font-size: 13px; color: var(--ink-faint); font-family: var(--mono); }
+
+  /* ---------- equalizer ambient graphic ---------- */
+  .eq {
+    position: absolute;
+    top: 0; right: -40px;
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    height: 340px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .eq i {
+    display: block;
+    width: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to top, var(--accent), color-mix(in srgb, var(--accent) 30%, transparent));
+    animation: bar 2.4s ease-in-out infinite;
+  }
+  @keyframes bar { 0%, 100% { transform: scaleY(var(--h1)); } 50% { transform: scaleY(var(--h2)); } }
+  .eq i { transform-origin: bottom; }
+  @media (max-width: 900px) { .eq { display: none; } }
+
+  /* ---------- signal diagram ---------- */
+  section.signal { padding: 8px 0 84px; }
+  .signal-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--wire);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 8px;
+    overflow: hidden;
+  }
+  .signal-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+    gap: 18px;
+    padding: 26px 26px;
+  }
+  .signal-row + .signal-row { border-top: 1px solid var(--wire); }
+  .signal-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .signal-label .who { display: block; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; text-transform: none; margin-bottom: 5px; }
+  .signal-row.local .signal-label .who { color: var(--ok); }
+  .signal-row.cloud .signal-label .who { color: var(--ink-faint); }
+  .signal-svg { width: 100%; height: 72px; display: block; }
+  .signal-foot {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 26px 22px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    border-top: 1px dashed var(--wire);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .signal-foot b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- section shell ---------- */
+  section { padding: 84px 0; }
+  section.alt { background: var(--bg-sunken); border-top: 1px solid var(--wire); border-bottom: 1px solid var(--wire); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-family: var(--mono);
+    font-size: clamp(26px, 3.4vw, 36px);
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .section-sub { color: var(--ink-muted); max-width: 60ch; line-height: 1.65; margin: 0 0 48px; font-size: 16px; }
+
+  /* ---------- steps ---------- */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 800px) { .steps { grid-template-columns: 1fr; } }
+  .step {
+    background: var(--bg-raised);
+    border: 1px solid var(--wire);
+    border-radius: 14px;
+    padding: 28px 24px;
+  }
+  .step .num { font-family: var(--mono); color: var(--accent); font-size: 12px; letter-spacing: 0.1em; margin-bottom: 16px; }
+  .step .glyph {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    background: var(--bg-sunken);
+    border: 1px solid var(--wire);
+    margin-bottom: 18px;
+  }
+  .step h3 { font-size: 17px; margin: 0 0 8px; font-weight: 650; }
+  .step p { font-size: 14.5px; color: var(--ink-muted); line-height: 1.6; margin: 0; }
+
+  /* ---------- feature grid ---------- */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--wire); border: 1px solid var(--wire); border-radius: 14px; overflow: hidden; }
+  @media (max-width: 800px) { .features { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .features { grid-template-columns: 1fr; } }
+  .feature { background: var(--bg-raised); padding: 26px 22px; }
+  .feature h3 { font-size: 15px; margin: 0 0 8px; font-weight: 650; display: flex; align-items: center; gap: 9px; }
+  .feature h3::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; }
+  .feature p { font-size: 13.5px; color: var(--ink-muted); line-height: 1.6; margin: 0; }
+
+  /* ---------- pricing ---------- */
+  .pricing-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: stretch; }
+  @media (max-width: 780px) { .pricing-grid { grid-template-columns: 1fr; } }
+  .price-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--wire-strong);
+    border-radius: 16px;
+    padding: 36px;
+    box-shadow: var(--shadow);
+  }
+  .price-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .price-amount { font-family: var(--mono); font-size: 52px; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .price-term { font-family: var(--mono); color: var(--ink-faint); font-size: 14px; }
+  .price-desc { color: var(--ink-muted); font-size: 14.5px; margin: 4px 0 26px; }
+  .price-list { list-style: none; margin: 0 0 30px; padding: 0; display: grid; gap: 12px; }
+  .price-list li { display: flex; gap: 10px; font-size: 14.5px; align-items: flex-start; }
+  .price-list li::before { content: "✓"; color: var(--ok); font-weight: 700; font-family: var(--mono); flex: none; }
+  .compare-card {
+    background: var(--bg-sunken);
+    border: 1px solid var(--wire);
+    border-radius: 16px;
+    padding: 30px 32px;
+  }
+  .compare-card h4 { font-family: var(--mono); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 0 0 20px; }
+  table.compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.compare th { text-align: left; font-family: var(--mono); font-size: 12px; color: var(--ink-faint); font-weight: 600; padding-bottom: 12px; }
+  table.compare th:not(:first-child), table.compare td:not(:first-child) { text-align: center; }
+  table.compare td { padding: 11px 4px; border-top: 1px solid var(--wire); color: var(--ink-muted); }
+  table.compare tr:first-child td { border-top: none; }
+  table.compare td.yes { color: var(--ok); font-weight: 700; font-family: var(--mono); }
+  table.compare td.no { color: var(--ink-faint); font-family: var(--mono); }
+  table.compare td:first-child { color: var(--ink); font-weight: 500; }
+  .compare-scroll { overflow-x: auto; }
+
+  /* ---------- requirements / footer cta ---------- */
+  .req-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 44px; }
+  @media (max-width: 780px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
+  .req { border: 1px solid var(--wire); border-radius: 12px; padding: 18px; background: var(--bg-raised); }
+  .req .k { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .req .v { font-size: 14.5px; font-weight: 550; }
+
+  footer {
+    border-top: 1px solid var(--wire);
+    padding: 40px 0 56px;
+  }
+  .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-weight: 700; font-size: 14px; }
+  .footer-brand img { width: 22px; height: 22px; border-radius: 6px; }
+  .footer-tag { font-size: 13px; color: var(--ink-faint); font-family: var(--mono); }
+  .footer-links { display: flex; gap: 20px; font-size: 13px; }
+  .footer-links a { color: var(--ink-muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+
+<nav class="top">
+  <div class="row">
+    <a class="brand" href="#top">
+      <img src="/logo.png" alt="" />
+      <span>Lauron<b>Flow</b></span>
+    </a>
+    <div class="navlinks">
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#get">Download</a>
+    </div>
+    <a class="btn btn-ghost" href="#get">Get LauronFlow</a>
+  </div>
+</nav>
+
+<div id="top"></div>
+
+<header class="hero">
+  <div class="wrap" style="position:relative;">
+    <div class="eq" aria-hidden="true" id="eq"></div>
+    <p class="eyebrow">Voice dictation · Apple Silicon · Fully offline</p>
+    <h1 class="headline">Hold. Speak.<br/>Release<span class="r">.</span></h1>
+    <p class="sub">
+      A menu-bar dictation app for macOS. Hold <code>⌥ Right Option</code> anywhere, say what you mean,
+      let go — the words land wherever your cursor is. Speech-to-text runs on your Mac's
+      own chip. Nothing you say is ever sent anywhere.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/lauronjohn/LauronFlow/releases">Download — 14-day free trial</a>
+      <a class="btn btn-ghost" href="#pricing">See pricing — $29</a>
+    </div>
+    <p class="cta-note">No account. No credit card for the trial. macOS 14+, Apple Silicon.</p>
+  </div>
+</header>
+
+<section class="signal" id="privacy">
+  <div class="wrap">
+    <div class="signal-card">
+      <div class="signal-row local">
+        <div class="signal-label"><span class="who">LauronFlow</span>on this Mac</div>
+        <svg class="signal-svg" viewBox="0 0 760 72" preserveAspectRatio="none" role="img" aria-label="Audio is captured, transcribed, and typed entirely on this Mac, never leaving the boundary.">
+          <rect x="6" y="6" width="748" height="60" rx="14" fill="none" stroke="var(--ok)" stroke-width="1.5" stroke-dasharray="3 5" opacity="0.55"/>
+          <circle cx="46" cy="36" r="9" fill="var(--ok)"/>
+          <path d="M78 36 L110 36 M120 22 L120 50 M136 14 L136 58 M152 26 L152 46 M168 10 L168 62 M184 26 L184 46 M200 22 L200 50 M216 30 L216 42 M232 36 L 270 36"
+                stroke="var(--ok)" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <path d="M290 36 L 700 36" stroke="var(--ok)" stroke-width="1.5" stroke-dasharray="1 7" stroke-linecap="round" opacity="0.6"/>
+          <text x="330" y="41" font-family="var(--mono)" font-size="12" fill="var(--ok)" letter-spacing="0.5">on-device transcription</text>
+          <rect x="700" y="20" width="34" height="32" rx="4" fill="none" stroke="var(--ok)" stroke-width="1.5"/>
+          <path d="M708 30 h18 M708 37 h18 M708 44 h11" stroke="var(--ok)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="signal-row cloud">
+        <div class="signal-label"><span class="who">Typical cloud dictation</span>elsewhere</div>
+        <svg class="signal-svg" viewBox="0 0 760 72" preserveAspectRatio="none" role="img" aria-label="Audio leaves the Mac, travels to a remote server, and the transcript is sent back.">
+          <circle cx="46" cy="52" r="9" fill="var(--ink-faint)"/>
+          <path d="M78 52 L120 52" stroke="var(--ink-faint)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M120 52 C 200 52, 220 14, 300 14" stroke="var(--ink-faint)" stroke-width="1.5" stroke-dasharray="2 6" fill="none"/>
+          <g transform="translate(300,2)" fill="var(--ink-faint)" opacity="0.9">
+            <circle cx="30" cy="20" r="13"/>
+            <circle cx="46" cy="16" r="10"/>
+            <circle cx="16" cy="16" r="9"/>
+            <rect x="10" y="18" width="42" height="14" rx="7"/>
+          </g>
+          <path d="M360 20 C 440 20, 460 52, 540 52" stroke="var(--ink-faint)" stroke-width="1.5" stroke-dasharray="2 6" fill="none"/>
+          <path d="M540 52 L 700 52" stroke="var(--ink-faint)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <rect x="700" y="36" width="34" height="32" rx="4" fill="none" stroke="var(--ink-faint)" stroke-width="1.5"/>
+          <path d="M708 46 h18 M708 53 h18 M708 60 h11" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="signal-foot">
+        <span>Boundary = this Mac's memory. Nothing crosses it.</span>
+        <span><b>0</b> network calls to transcribe · <b>0</b> accounts · <b>0</b> telemetry</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <p class="kicker">How it works</p>
+    <h2>Three motions. No app to switch to.</h2>
+    <p class="section-sub">LauronFlow lives in the menu bar and never takes focus. It works inside whatever
+      you're already typing in — Mail, Slack, a terminal, an address bar.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01 / HOLD</div>
+        <div class="glyph">⌥</div>
+        <h3>Hold Right Option</h3>
+        <p>Anywhere, in any app. It's observed, not swallowed — your keystrokes still work normally.</p>
+      </div>
+      <div class="step">
+        <div class="num">02 / SPEAK</div>
+        <div class="glyph">◕</div>
+        <h3>Say what you mean</h3>
+        <p>A small floating widget shows a live waveform so you know it's actually listening.</p>
+      </div>
+      <div class="step">
+        <div class="num">03 / RELEASE</div>
+        <div class="glyph">↵</div>
+        <h3>Let go</h3>
+        <p>The transcript is typed instantly into whatever has focus. Misheard something?
+          Undo with <code style="font-family:var(--mono); font-size:0.85em; background:var(--bg-sunken); border:1px solid var(--wire); padding:1px 6px; border-radius:5px;">⌃⌥Z</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <p class="kicker">Built for how you actually work</p>
+    <h2>Small utility, full control</h2>
+    <p class="section-sub">Every setting lives in one Settings window — General, Vocabulary, Shortcuts.</p>
+    <div class="features">
+      <div class="feature">
+        <h3>Custom vocabulary</h3>
+        <p>Teach it the names and jargon it keeps mishearing — a find/replace list applied before anything is typed.</p>
+      </div>
+      <div class="feature">
+        <h3>Configurable hotkeys</h3>
+        <p>Change the push-to-talk key and the undo shortcut from Settings → Shortcuts. No restart needed.</p>
+      </div>
+      <div class="feature">
+        <h3>Undo last dictation</h3>
+        <p>One keystroke removes the last thing LauronFlow typed, restoring your original clipboard after.</p>
+      </div>
+      <div class="feature">
+        <h3>Live waveform widget</h3>
+        <p>A floating indicator confirms you're being heard while recording — toggle it off if you'd rather not see it.</p>
+      </div>
+      <div class="feature">
+        <h3>Launch at login</h3>
+        <p>One toggle, backed by <code style="font-family:var(--mono); font-size:0.85em;">SMAppService</code> — it's ready before you are.</p>
+      </div>
+      <div class="feature">
+        <h3>Parakeet, on-device</h3>
+        <p>NVIDIA's Parakeet TDT model runs locally via Apple's MLX — loaded once, reused for every utterance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <p class="kicker">Pricing</p>
+    <h2>Try it free. Buy it once.</h2>
+    <p class="section-sub">No subscription — because there's no server-side transcription to pay for.
+      The 14-day trial is the full app, no feature gate.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-top">
+          <span class="price-amount">$29</span>
+          <span class="price-term">one-time</span>
+        </div>
+        <p class="price-desc">One license, yours to keep. Free updates. No recurring charge, ever.</p>
+        <ul class="price-list">
+          <li>Full app, unlocked forever after purchase</li>
+          <li>14 days free before you pay anything</li>
+          <li>License key checked once at activation — dictation itself never touches the network</li>
+          <li>All future updates included</li>
+        </ul>
+        <div class="cta-row" style="margin-bottom:0;">
+          <a class="btn btn-primary" href="https://github.com/lauronjohn/LauronFlow/releases" style="flex:1; justify-content:center;">Start free trial</a>
+          <a class="btn btn-ghost" href="https://lauron25.gumroad.com/l/LauronFlow?wanted=true" style="flex:1; justify-content:center;">Buy now — $29</a>
+        </div>
+        <p class="cta-note" style="margin-top:14px; text-align:center;">Already trialing? Buy from the app instead: menu bar icon → Settings → License.</p>
+      </div>
+      <div class="compare-card">
+        <h4>vs. a typical cloud dictation subscription</h4>
+        <div class="compare-scroll">
+          <table class="compare">
+            <thead><tr><th></th><th>LauronFlow</th><th>Cloud tools</th></tr></thead>
+            <tbody>
+              <tr><td>Cost</td><td class="yes">$29 once</td><td class="no">~$12–15/mo</td></tr>
+              <tr><td>Audio leaves your Mac</td><td class="yes">Never</td><td class="no">Every time</td></tr>
+              <tr><td>Account required</td><td class="yes">No</td><td class="no">Yes</td></tr>
+              <tr><td>Works offline</td><td class="yes">Yes</td><td class="no">No</td></tr>
+              <tr><td>Telemetry</td><td class="yes">None</td><td class="no">Varies</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="get">
+  <div class="wrap">
+    <p class="kicker">Get started</p>
+    <h2>What you'll need</h2>
+    <div class="req-grid">
+      <div class="req"><div class="k">Chip</div><div class="v">Apple Silicon</div></div>
+      <div class="req"><div class="k">macOS</div><div class="v">14.0 or later</div></div>
+      <div class="req"><div class="k">Download</div><div class="v">~600 MB model, first launch only</div></div>
+      <div class="req"><div class="k">Dependencies</div><div class="v"><code style="font-family:var(--mono); font-size:0.85em;">brew install uv ffmpeg</code></div></div>
+    </div>
+    <p class="section-sub" style="margin-bottom:28px;">
+      LauronFlow is signed with a personal certificate, not an Apple Developer ID, so first launch
+      needs one Gatekeeper bypass (<code style="font-family:var(--mono); font-size:0.85em; background:var(--bg-raised); border:1px solid var(--wire); padding:1px 6px; border-radius:5px;">xattr -cr</code> or right‑click → Open).
+      After that it runs exactly like any other menu-bar app.
+    </p>
+    <a class="btn btn-primary" href="https://github.com/lauronjohn/LauronFlow/releases">Download LauronFlow — free 14-day trial</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div class="footer-brand">
+      <img src="/logo.png" alt="" />
+      LauronFlow
+    </div>
+    <p class="footer-tag">No cloud calls. No telemetry. No account.</p>
+    <div class="footer-links">
+      <a href="https://github.com/lauronjohn/LauronFlow">GitHub</a>
+      <a href="https://github.com/lauronjohn/LauronFlow#troubleshooting">Support</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var eq = document.getElementById('eq');
+    if (!eq) return;
+    var bars = 22;
+    for (var i = 0; i < bars; i++) {
+      var el = document.createElement('i');
+      var h1 = (0.15 + Math.random() * 0.5).toFixed(2);
+      var h2 = (0.35 + Math.random() * 0.65).toFixed(2);
+      el.style.setProperty('--h1', h1);
+      el.style.setProperty('--h2', h2);
+      el.style.height = (60 + Math.random() * 220) + 'px';
+      el.style.animationDuration = (1.6 + Math.random() * 2.2) + 's';
+      el.style.animationDelay = (Math.random() * -3) + 's';
+      eq.appendChild(el);
+    }
+  })();
+</script>
+
+</body>
+</html>

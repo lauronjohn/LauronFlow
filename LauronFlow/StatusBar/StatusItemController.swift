@@ -2,8 +2,11 @@ import AppKit
 
 final class StatusItemController {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+    private let licenseStatusItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private let buyLicenseItem = NSMenuItem(title: "Buy License…", action: #selector(handleBuyLicense), keyEquivalent: "")
     var onTestTranscription: (() -> Void)?
     var onOpenSettings: (() -> Void)?
+    var onBuyLicense: (() -> Void)?
 
     init() {
         statusItem.button?.image = Self.image(for: .idle)
@@ -17,6 +20,20 @@ final class StatusItemController {
             statusItem.button?.toolTip = message
         } else {
             statusItem.button?.toolTip = nil
+        }
+    }
+
+    func updateLicenseState(_ state: LicenseState) {
+        switch state {
+        case .trial(let daysRemaining):
+            licenseStatusItem.title = "Trial: \(daysRemaining) day\(daysRemaining == 1 ? "" : "s") left"
+            buyLicenseItem.isHidden = false
+        case .trialExpired:
+            licenseStatusItem.title = "Trial Expired"
+            buyLicenseItem.isHidden = false
+        case .licensed:
+            licenseStatusItem.title = "Licensed"
+            buyLicenseItem.isHidden = true
         }
     }
 
@@ -62,6 +79,14 @@ final class StatusItemController {
 
         menu.addItem(.separator())
 
+        licenseStatusItem.isEnabled = false
+        menu.addItem(licenseStatusItem)
+        buyLicenseItem.target = self
+        buyLicenseItem.isHidden = true
+        menu.addItem(buyLicenseItem)
+
+        menu.addItem(.separator())
+
         menu.addItem(NSMenuItem(
             title: "Quit LauronFlow",
             action: #selector(NSApplication.terminate(_:)),
@@ -77,5 +102,9 @@ final class StatusItemController {
 
     @objc private func handleOpenSettings() {
         onOpenSettings?()
+    }
+
+    @objc private func handleBuyLicense() {
+        onBuyLicense?()
     }
 }

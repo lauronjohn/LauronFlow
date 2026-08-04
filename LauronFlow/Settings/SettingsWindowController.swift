@@ -11,10 +11,12 @@ import SwiftUI
 /// anything.
 final class SettingsWindowController {
     private let store: VocabularyStore
+    private let licenseManager: LicenseManager
     private var window: NSWindow?
 
-    init(store: VocabularyStore) {
+    init(store: VocabularyStore, licenseManager: LicenseManager) {
         self.store = store
+        self.licenseManager = licenseManager
     }
 
     func show() {
@@ -24,7 +26,7 @@ final class SettingsWindowController {
         // snapshots its toggles into @State at init, so reusing a stale hosting
         // view across opens could show outdated values (e.g. if Launch at Login
         // was changed outside the app while this window sat closed).
-        window.contentView = NSHostingView(rootView: SettingsView(vocabularyStore: store))
+        window.contentView = NSHostingView(rootView: SettingsView(vocabularyStore: store, licenseManager: licenseManager))
         // Activate first, then order front: this is an LSUIElement (accessory)
         // app, so ordering the window front while LauronFlow still isn't the
         // active app leaves it behind whatever app was frontmost — it looked
@@ -36,7 +38,7 @@ final class SettingsWindowController {
 
     private func makeWindow() -> NSWindow {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 460, height: 380),
+            contentRect: NSRect(x: 0, y: 0, width: 700, height: 500),
             styleMask: [.titled, .closable, .resizable, .miniaturizable],
             backing: .buffered,
             defer: false

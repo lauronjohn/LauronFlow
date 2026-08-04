@@ -1,5 +1,6 @@
 import AppKit
 import Carbon.HIToolbox
+import Combine
 import Foundation
 import os
 
@@ -15,8 +16,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let textInjector = TextInjector()
     private let recordingWidget = RecordingWidgetController()
     private let vocabularyStore = VocabularyStore()
-    private lazy var settingsWindowController = SettingsWindowController(store: vocabularyStore)
+    private let licenseManager = LicenseManager()
+    private lazy var settingsWindowController = SettingsWindowController(store: vocabularyStore, licenseManager: licenseManager)
     private var accessibilityObserverTimer: Timer?
+    private var cancellables = Set<AnyCancellable>()
     private var isBusy = false
     private var currentRecordingURL: URL?
     private var currentRecordingStartedAt: Date?
@@ -32,6 +35,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         statusItemController.onOpenSettings = { [weak self] in
             self?.settingsWindowController.show()
+        }
+        statusItemController.onBuyLicense = {
+            NSWorkspace.shared.open(GumroadConfig.purchaseURL)
+        }
+        statusItemController.updateLicenseState(licenseManager.state)
+        licenseManager.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                self?.statusItemController.updateLicenseState(state)
+            }
+            .store(in: &cancellables)
+
+        if licenseManager.isFirstLaunch {
+            showTrialStartedNotice()
         }
 
         sidecarManager.onCrash = { [weak self] message in
@@ -91,6 +108,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         sidecarManager.stop()
     }
 
+    /// Shown once, on the very launch that starts the trial clock (see
+    /// `LicenseManager.isFirstLaunch`) — activates the app first since this is an
+    /// LSUIElement (accessory) app with no Dock icon, so the alert would otherwise
+    /// appear behind whatever app was frontmost.
+    private func showTrialStartedNotice() {
+        NSApp.activate()
+        let alert = NSAlert()
+        alert.messageText = "Welcome to LauronFlow"
+        alert.informativeText = "Your 14-day free trial has started. Hold Right Option (⌥) anywhere to dictate — everything runs on-device, nothing is uploaded. Buy a license anytime from the menu bar icon > Settings > License."
+        alert.addButton(withTitle: "Get Started")
+        alert.runModal()
+    }
+
     private func handleAccessibilityTrustChange(_ trusted: Bool) {
         if trusted {
             hotkeyManager.start()
@@ -123,6 +153,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @discardableResult
     private func beginRecording() -> Bool {
         guard !isBusy else { return false }
+        guard licenseManager.refreshState().isUsable else {
+            statusItemController.setState(.error(
+                "Your 14-day trial has ended — open Settings > License to buy LauronFlow and keep dictating."
+            ))
+            return false
+        }
         guard FileManager.default.fileExists(atPath: SidecarPaths.socketURL.path) else {
             statusItemController.setState(.error("Sidecar still starting up — try again in a few seconds."))
             return false
