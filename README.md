@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" width="140" alt="LauronFlow logo" />
+</p>
+
 # LauronFlow
 
 A local, fully-offline voice dictation app for macOS (Apple Silicon). Hold a global
@@ -76,12 +80,16 @@ Grant Microphone + Accessibility permissions on first launch, same as Option A.
 ## Using it
 
 - Hold **Right Option (⌥)**, speak, release — the transcript is typed wherever your
-  cursor is focused.
-- Menu bar icon shows state (idle / recording / transcribing / error) and has a Settings
-  window for a custom vocabulary (fixing words the model consistently mishears) and
-  Launch at Login.
-- An "undo" hotkey removes the last thing LauronFlow typed, in case a transcription is
-  wrong — see the menu bar Settings for the current binding.
+  cursor is focused. A floating widget shows a live waveform while recording.
+- An undo hotkey (default **⌃ Control + ⌥ Option + Z**) removes the last thing LauronFlow
+  typed, in case a transcription is wrong.
+- Menu bar icon shows state (idle / recording / transcribing / error) and has a
+  **Settings…** window with three tabs:
+  - **General** — Launch at Login, show/hide the floating recording widget, and a quick
+    on/off switch for vocabulary replacements.
+  - **Vocabulary** — a custom find/replace list for words the model consistently
+    mishears (names, jargon, etc.), applied before the transcript is typed.
+  - **Shortcuts** — a reference for the current hotkey bindings.
 
 ## Troubleshooting
 
