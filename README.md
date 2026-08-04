@@ -1,8 +1,8 @@
+# LauronFlow
+
 <p align="center">
   <img src="logo.png" width="140" alt="LauronFlow logo" />
 </p>
-
-# LauronFlow
 
 A local, fully-offline voice dictation app for macOS (Apple Silicon). Hold a global
 hotkey anywhere, speak, release — the transcript is typed into whatever app has focus.
