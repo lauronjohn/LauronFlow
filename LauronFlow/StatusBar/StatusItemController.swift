@@ -2,21 +2,12 @@ import AppKit
 
 final class StatusItemController {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-    private let launchAtLoginItem = NSMenuItem(
-        title: "Launch at Login",
-        action: nil,
-        keyEquivalent: ""
-    )
     var onTestTranscription: (() -> Void)?
-    var onToggleLaunchAtLogin: (() -> Void)?
+    var onOpenSettings: (() -> Void)?
 
     init() {
         statusItem.button?.image = Self.image(for: .idle)
         statusItem.menu = buildMenu()
-    }
-
-    func setLaunchAtLoginEnabled(_ enabled: Bool) {
-        launchAtLoginItem.state = enabled ? .on : .off
     }
 
     func setState(_ state: AppState) {
@@ -61,9 +52,13 @@ final class StatusItemController {
         testItem.target = self
         menu.addItem(testItem)
 
-        launchAtLoginItem.action = #selector(handleToggleLaunchAtLogin)
-        launchAtLoginItem.target = self
-        menu.addItem(launchAtLoginItem)
+        let settingsItem = NSMenuItem(
+            title: "Settings…",
+            action: #selector(handleOpenSettings),
+            keyEquivalent: ""
+        )
+        settingsItem.target = self
+        menu.addItem(settingsItem)
 
         menu.addItem(.separator())
 
@@ -80,7 +75,7 @@ final class StatusItemController {
         onTestTranscription?()
     }
 
-    @objc private func handleToggleLaunchAtLogin() {
-        onToggleLaunchAtLogin?()
+    @objc private func handleOpenSettings() {
+        onOpenSettings?()
     }
 }

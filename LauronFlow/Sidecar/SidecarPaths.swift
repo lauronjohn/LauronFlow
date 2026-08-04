@@ -16,11 +16,32 @@ enum SidecarPaths {
         supportDirectory.appendingPathComponent("sidecar.log")
     }
 
-    /// Personal single-machine app: the sidecar is an independent uv-managed
-    /// Python project living alongside the Xcode project, not embedded in
-    /// the app bundle. Update this if the checkout moves.
+    static var vocabularyURL: URL {
+        supportDirectory.appendingPathComponent("vocabulary.json")
+    }
+
+    /// Path to `sidecar_path.txt`, written by install.sh with the absolute path of
+    /// the sidecar checkout on *this* machine — needed because the sidecar is an
+    /// independent uv-managed Python project living alongside the Xcode project,
+    /// not embedded in the app bundle, so its location varies per user/checkout.
+    static var sidecarPathConfigURL: URL {
+        supportDirectory.appendingPathComponent("sidecar_path.txt")
+    }
+
+    /// Resolution order: explicit env override (dev convenience) > the path
+    /// install.sh recorded at build time > the original single-machine default,
+    /// kept as a last-resort fallback for pre-existing installs.
     static var sidecarProjectDirectory: URL {
-        URL(fileURLWithPath: "/Users/johnlauron/Desktop/LauronFlow/sidecar")
+        if let envPath = ProcessInfo.processInfo.environment["LAURONFLOW_SIDECAR_DIR"], !envPath.isEmpty {
+            return URL(fileURLWithPath: envPath)
+        }
+        if let recorded = try? String(contentsOf: sidecarPathConfigURL, encoding: .utf8) {
+            let trimmed = recorded.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty {
+                return URL(fileURLWithPath: trimmed)
+            }
+        }
+        return URL(fileURLWithPath: "/Users/johnlauron/Desktop/LauronFlow/sidecar")
     }
 
     static func resolveUvExecutable() -> URL? {

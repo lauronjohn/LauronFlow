@@ -3,9 +3,32 @@
 set -euo pipefail
 
 cd "$(dirname "$0")"
+REPO_DIR="$(pwd)"
 
 APP_NAME="LauronFlow.app"
 DEST="/Applications/$APP_NAME"
+SUPPORT_DIR="$HOME/Library/Application Support/LauronFlow"
+
+echo "==> Checking prerequisites..."
+for cmd in xcodegen uv ffmpeg; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Missing dependency: $cmd (see README.md for setup instructions)." >&2
+    exit 1
+  fi
+done
+if [ ! -d "$REPO_DIR/sidecar" ]; then
+  echo "sidecar/ not found next to this script — see README.md for the expected layout." >&2
+  exit 1
+fi
+if ! security find-identity -v -p codesigning | grep -q "LauronFlow Local Dev"; then
+  echo "No 'LauronFlow Local Dev' signing certificate found in your keychain." >&2
+  echo "See README.md for how to create a one-time local self-signed certificate." >&2
+  exit 1
+fi
+
+echo "==> Recording sidecar location for this machine..."
+mkdir -p "$SUPPORT_DIR"
+printf '%s' "$REPO_DIR/sidecar" > "$SUPPORT_DIR/sidecar_path.txt"
 
 echo "==> Generating Xcode project..."
 xcodegen generate
