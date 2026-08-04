@@ -16,6 +16,9 @@ app talks to over a Unix socket.
 
 This is a personal project shared for testing among friends — it isn't notarized or
 distributed through the App Store, so there's a bit of one-time setup either way below.
+Every install starts a **14-day free trial**; after that, dictation is disabled until a
+license is activated (Settings → License). The license key is the only thing this app
+ever sends over the network — audio and transcripts never leave your Mac.
 
 ## Option A: Download the prebuilt release (easiest)
 
@@ -78,17 +81,21 @@ Grant Microphone + Accessibility permissions on first launch, same as Option A.
 
 ## Using it
 
-- Hold **Right Option (⌥)**, speak, release — the transcript is typed wherever your
-  cursor is focused. A floating widget shows a live waveform while recording.
-- An undo hotkey (default **⌃ Control + ⌥ Option + Z**) removes the last thing LauronFlow
-  typed, in case a transcription is wrong.
-- Menu bar icon shows state (idle / recording / transcribing / error) and has a
-  **Settings…** window with three tabs:
+- Hold **Right Option (⌥)** (configurable), speak, release — the transcript is typed
+  wherever your cursor is focused. A floating widget shows a live waveform while
+  recording, and the menu bar icon shows live download/loading progress on first launch.
+- An undo hotkey (default **⌃ Control + ⌥ Option + Z**, configurable) removes the last
+  thing LauronFlow typed, in case a transcription is wrong.
+- Menu bar icon shows state (idle / starting up / recording / transcribing / error) and
+  has a **Settings…** window with four panes:
   - **General** — Launch at Login, show/hide the floating recording widget, and a quick
     on/off switch for vocabulary replacements.
   - **Vocabulary** — a custom find/replace list for words the model consistently
     mishears (names, jargon, etc.), applied before the transcript is typed.
-  - **Shortcuts** — a reference for the current hotkey bindings.
+  - **Shortcuts** — pick your own record and undo key combos; defaults match the ones
+    above. Changes apply immediately, no restart needed.
+  - **License** — trial days remaining, license key activation, and a "Buy License…"
+    link.
 
 ## Troubleshooting
 
@@ -100,3 +107,5 @@ Grant Microphone + Accessibility permissions on first launch, same as Option A.
 - **Transcribed but couldn't type it:** grant Accessibility permission in System
   Settings → Privacy & Security → Accessibility, and make sure no secure input field
   (e.g. a password box) has focus.
+- **Dictation just stopped working after a couple weeks:** the 14-day trial likely
+  ended — check Settings → License.
