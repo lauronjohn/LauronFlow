@@ -58,6 +58,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        NotificationCenter.default.addObserver(forName: .recordHotkeyChanged, object: nil, queue: .main) { [weak self] _ in
+            self?.hotkeyManager.updateOption(AppSettings.recordHotkeyOption)
+        }
+        NotificationCenter.default.addObserver(forName: .undoHotkeyChanged, object: nil, queue: .main) { [weak self] _ in
+            self?.undoHotkeyManager.update(letter: AppSettings.undoHotkeyLetter, modifiers: AppSettings.undoHotkeyModifiers)
+        }
+
         PermissionsHelper.requestMicrophoneAccess { [weak self] granted in
             if !granted {
                 logger.error("Microphone access not granted; recording will fail until enabled in System Settings.")

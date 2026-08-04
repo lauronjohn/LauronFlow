@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		08F3D0025B9F99F7EC98960E /* HotkeyOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED50D6547521694CFD55C9B /* HotkeyOptions.swift */; };
 		0D92C422558F0DF84B1D7505 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3912599BAC8005ACDEC1BB34 /* AppState.swift */; };
 		193396A17EA074783ABB89C8 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F99132530321251B22A10D /* AppSettings.swift */; };
 		1DCF8ADF3BF13C2E05307BFC /* SidecarClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFABAF788E123215E5AD7B66 /* SidecarClient.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		0006A3DC4A779CA9F7722007 /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
 		01186D00103B57E9507E9A21 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		0ED50D6547521694CFD55C9B /* HotkeyOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyOptions.swift; sourceTree = "<group>"; };
 		119B5F7B16BA477B57457735 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		19F99132530321251B22A10D /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		1B878CFC778B40D8D0ACBC86 /* LauronFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauronFlowApp.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				01186D00103B57E9507E9A21 /* HotkeyManager.swift */,
+				0ED50D6547521694CFD55C9B /* HotkeyOptions.swift */,
 				6BC960FFCC3E84E6DB683E33 /* UndoHotkeyManager.swift */,
 			);
 			path = Hotkey;
@@ -273,6 +276,7 @@
 				EAB15F9DC8D5CFFCE3254DF2 /* AudioRecorder.swift in Sources */,
 				3CBB1C2CA3BC931963B18876 /* GeneralSettingsView.swift in Sources */,
 				AB49009D5E984F86D9F53E42 /* HotkeyManager.swift in Sources */,
+				08F3D0025B9F99F7EC98960E /* HotkeyOptions.swift in Sources */,
 				E4EE99BCBD6F119652EC7075 /* LaunchAtLoginManager.swift in Sources */,
 				4AF8E30175C767F449640BFE /* LauronFlowApp.swift in Sources */,
 				E68859F4CE8D4A6A1DB9CA61 /* PermissionsHelper.swift in Sources */,
