@@ -31,3 +31,22 @@ targets:
         PRODUCT_NAME: LauronFlow
         INFOPLIST_KEY_LSUIElement: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    postBuildScripts:
+      - name: "Bundle sidecar Python source"
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          SIDECAR_SRC="$SRCROOT/sidecar"
+          if [ ! -d "$SIDECAR_SRC" ]; then
+            echo "error: $SIDECAR_SRC not found — see README.md for expected layout." >&2
+            exit 1
+          fi
+          DEST="${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources/sidecar"
+          rm -rf "$DEST"
+          mkdir -p "$DEST"
+          cp "$SIDECAR_SRC/pyproject.toml" "$DEST/"
+          cp "$SIDECAR_SRC/uv.lock" "$DEST/"
+          [ -f "$SIDECAR_SRC/.python-version" ] && cp "$SIDECAR_SRC/.python-version" "$DEST/"
+          [ -f "$SIDECAR_SRC/README.md" ] && cp "$SIDECAR_SRC/README.md" "$DEST/"
+          rsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='*.pyo' --exclude='.DS_Store' \
+            "$SIDECAR_SRC/src/" "$DEST/src/"

@@ -71,6 +71,11 @@ final class SidecarProcessManager {
         // machine, which this Python build's site.py silently skips, breaking the
         // import. Non-editable install sidesteps it. See PLAN.md setup prerequisites.
         env["UV_NO_EDITABLE"] = "1"
+        // Redirects uv's venv to a stable Application Support location, independent
+        // of sidecarProjectDirectory — keeps uv from ever writing inside the app
+        // bundle (that dir may be the bundled, read-only-in-spirit Resources/sidecar
+        // copy) and means the resolved dependencies survive app reinstalls/updates.
+        env["UV_PROJECT_ENVIRONMENT"] = SidecarPaths.sidecarVenvURL.path
         // GUI-launched apps (Finder/LaunchServices) get a minimal PATH
         // (/usr/bin:/bin:/usr/sbin:/sbin) with no Homebrew directories, unlike an
         // interactive shell. parakeet-mlx shells out to ffmpeg at transcribe time, so

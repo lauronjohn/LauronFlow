@@ -19,6 +19,9 @@ distributed through the App Store, so there's a bit of one-time setup either way
 
 ## Option A: Download the prebuilt release (easiest)
 
+The release `.app` is self-contained — the speech-to-text sidecar is bundled inside it,
+so there's no separate repo to clone.
+
 1. Grab the latest `LauronFlow.app.zip` from [Releases](../../releases), unzip it, and
    drag `LauronFlow.app` into `/Applications`.
 2. It's signed with a personal self-signed certificate, not an Apple Developer ID, so
@@ -31,21 +34,16 @@ distributed through the App Store, so there's a bit of one-time setup either way
    ```
    brew install uv ffmpeg
    ```
-4. Clone the sidecar (the speech-to-text engine — kept as a separate repo):
-   ```
-   git clone https://github.com/lauronjohn/lauronflow-sidecar.git ~/lauronflow-sidecar
-   ```
-5. Point the app at it (one-time):
-   ```
-   ./configure-sidecar.sh ~/lauronflow-sidecar
-   ```
-   (`configure-sidecar.sh` is in this repo — `git clone` this repo too, or just download
-   that one file from it.)
-6. Launch LauronFlow from `/Applications`. First launch downloads the ~600MB Parakeet
+4. Launch LauronFlow from `/Applications`. First launch downloads the ~600MB Parakeet
    model from Hugging Face, so it can take a minute and needs internet the first time.
-7. Grant permissions when prompted: **Microphone** and **Accessibility** (System
+5. Grant permissions when prompted: **Microphone** and **Accessibility** (System
    Settings → Privacy & Security). Accessibility is required for typing the transcript
    into other apps — without it LauronFlow can transcribe but can't inject text.
+
+Working on the sidecar itself and want the app to use your own checkout instead of the
+bundled copy? Clone [lauronflow-sidecar](https://github.com/lauronjohn/lauronflow-sidecar)
+and point the app at it with `./configure-sidecar.sh /path/to/lauronflow-sidecar`
+(`configure-sidecar.sh` is in this repo).
 
 ## Option B: Build from source
 

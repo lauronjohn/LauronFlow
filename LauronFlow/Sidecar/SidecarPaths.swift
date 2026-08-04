@@ -20,6 +20,16 @@ enum SidecarPaths {
         supportDirectory.appendingPathComponent("vocabulary.json")
     }
 
+    /// Where `uv run`'s virtual environment is redirected to (via
+    /// `UV_PROJECT_ENVIRONMENT` in `SidecarProcessManager`), independent of wherever
+    /// `sidecarProjectDirectory` resolves to. Keeps `uv` from ever writing inside the
+    /// app bundle itself, and means the venv (and its already-resolved dependencies)
+    /// persists across app reinstalls/updates instead of being rebuilt from scratch
+    /// every time.
+    static var sidecarVenvURL: URL {
+        supportDirectory.appendingPathComponent("sidecar-venv")
+    }
+
     /// Path to `sidecar_path.txt`, written by install.sh with the absolute path of
     /// the sidecar checkout on *this* machine — needed because the sidecar is an
     /// independent uv-managed Python project living alongside the Xcode project,
@@ -29,8 +39,11 @@ enum SidecarPaths {
     }
 
     /// Resolution order: explicit env override (dev convenience) > the path
-    /// install.sh recorded at build time > the original single-machine default,
-    /// kept as a last-resort fallback for pre-existing installs.
+    /// install.sh recorded at build time > the copy bundled into the app's Resources
+    /// at build time (see project.yml's "Bundle sidecar Python source" build phase —
+    /// this is what makes a downloaded release .app self-contained for testers,
+    /// without a separate sidecar clone/configure-sidecar.sh step) > the original
+    /// single-machine default, kept as a last-resort fallback for pre-existing installs.
     static var sidecarProjectDirectory: URL {
         if let envPath = ProcessInfo.processInfo.environment["LAURONFLOW_SIDECAR_DIR"], !envPath.isEmpty {
             return URL(fileURLWithPath: envPath)
@@ -40,6 +53,10 @@ enum SidecarPaths {
             if !trimmed.isEmpty {
                 return URL(fileURLWithPath: trimmed)
             }
+        }
+        if let resourceDir = Bundle.main.resourceURL?.appendingPathComponent("sidecar"),
+           FileManager.default.fileExists(atPath: resourceDir.appendingPathComponent("pyproject.toml").path) {
+            return resourceDir
         }
         return URL(fileURLWithPath: "/Users/johnlauron/Desktop/LauronFlow/sidecar")
     }

@@ -228,6 +228,7 @@
 			buildPhases = (
 				FF560C4ECFE75426E3E3A4D0 /* Sources */,
 				A2BA003E2520BFD20299B920 /* Resources */,
+				26D6B0774C161746A616E203 /* Bundle sidecar Python source */,
 			);
 			buildRules = (
 			);
@@ -283,6 +284,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		26D6B0774C161746A616E203 /* Bundle sidecar Python source */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle sidecar Python source";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nSIDECAR_SRC=\"$SRCROOT/sidecar\"\nif [ ! -d \"$SIDECAR_SRC\" ]; then\n  echo \"error: $SIDECAR_SRC not found — see README.md for expected layout.\" >&2\n  exit 1\nfi\nDEST=\"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources/sidecar\"\nrm -rf \"$DEST\"\nmkdir -p \"$DEST\"\ncp \"$SIDECAR_SRC/pyproject.toml\" \"$DEST/\"\ncp \"$SIDECAR_SRC/uv.lock\" \"$DEST/\"\n[ -f \"$SIDECAR_SRC/.python-version\" ] && cp \"$SIDECAR_SRC/.python-version\" \"$DEST/\"\n[ -f \"$SIDECAR_SRC/README.md\" ] && cp \"$SIDECAR_SRC/README.md\" \"$DEST/\"\nrsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='*.pyo' --exclude='.DS_Store' \\\n  \"$SIDECAR_SRC/src/\" \"$DEST/src/\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FF560C4ECFE75426E3E3A4D0 /* Sources */ = {
