@@ -7,11 +7,18 @@ import Carbon.HIToolbox
 ///
 /// Must be called on the main thread — `inject(_:)` touches `NSPasteboard`
 /// and returns immediately (fire-and-forget); the restore happens
-/// asynchronously ~300ms later once the synthetic paste has had time to be
-/// processed by the target app, so no thread-safety machinery is needed here.
+/// asynchronously once the synthetic paste has had time to be processed by
+/// the target app, so no thread-safety machinery is needed here.
 final class TextInjector {
-    private let restoreDelay: TimeInterval = 0.3
+    /// How long to leave the transcript on the general pasteboard before restoring the
+    /// user's previous contents. Must be generous: some apps (Word, Google Docs, heavy
+    /// Electron/web apps) read the pasteboard asynchronously and can take well over
+    /// 300ms to process a synthetic Cmd+V — a too-early restore is indistinguishable
+    /// from "nothing got pasted" from the user's point of view. 1s covers essentially
+    /// every real app while keeping the clipboard hijack imperceptible.
+    private let restoreDelay: TimeInterval = 1.0
     private var lastInjectedText: String?
+    private var pendingRestore: DispatchWorkItem?
 
     func inject(_ text: String) {
         guard !text.isEmpty else { return }
@@ -25,9 +32,29 @@ final class TextInjector {
 
         Self.postCommandV()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + restoreDelay) {
-            Self.restore(savedItems, to: pasteboard)
+        // Cancel any restore still pending from a previous injection. (Injections are
+        // serialized upstream via `isBusy`, so this is defensive, not load-bearing.)
+        pendingRestore?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            self?.restoreIfUnclaimed(savedItems, to: pasteboard, injectedText: text)
         }
+        pendingRestore = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + restoreDelay, execute: work)
+    }
+
+    /// Restores the user's original clipboard contents — but only if the pasteboard still
+    /// holds the text we injected. If the user copied something else during the restore
+    /// window (or a previous restore already ran), their newer content is left alone:
+    /// a blind restore here would clobber whatever they just copied, which is worse than
+    /// leaving our (already-pasted) transcript on the clipboard.
+    private func restoreIfUnclaimed(
+        _ savedItems: [[NSPasteboard.PasteboardType: Data]],
+        to pasteboard: NSPasteboard,
+        injectedText: String
+    ) {
+        pendingRestore = nil
+        guard pasteboard.string(forType: .string) == injectedText else { return }
+        Self.restore(savedItems, to: pasteboard)
     }
 
     /// Removes the last text this instance injected by sending one backspace
