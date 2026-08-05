@@ -4,7 +4,7 @@ final class StatusItemController {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let licenseStatusItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private let buyLicenseItem = NSMenuItem(title: "Buy License…", action: #selector(handleBuyLicense), keyEquivalent: "")
-    private let startupStatusItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private let statusMessageItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     var onTestTranscription: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     var onBuyLicense: (() -> Void)?
@@ -26,13 +26,15 @@ final class StatusItemController {
             statusItem.button?.toolTip = nil
         }
 
-        // Also surfaced as a visible (non-hover) menu row, since a tester is unlikely to
-        // think to hover the icon during what looks like an unresponsive first launch.
-        if case .starting(let message) = state {
-            startupStatusItem.title = message
-            startupStatusItem.isHidden = false
-        } else {
-            startupStatusItem.isHidden = true
+        // Also surfaced as a visible (non-hover) menu row: a tester is unlikely to think to
+        // hover the icon, whether what looks broken is an unresponsive first launch or a
+        // silent failure to inject text.
+        switch state {
+        case .starting(let message), .error(let message):
+            statusMessageItem.title = message
+            statusMessageItem.isHidden = false
+        default:
+            statusMessageItem.isHidden = true
         }
     }
 
@@ -97,9 +99,9 @@ final class StatusItemController {
 
         menu.addItem(.separator())
 
-        startupStatusItem.isEnabled = false
-        startupStatusItem.isHidden = true
-        menu.addItem(startupStatusItem)
+        statusMessageItem.isEnabled = false
+        statusMessageItem.isHidden = true
+        menu.addItem(statusMessageItem)
 
         licenseStatusItem.isEnabled = false
         menu.addItem(licenseStatusItem)

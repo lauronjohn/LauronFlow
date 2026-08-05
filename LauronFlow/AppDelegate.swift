@@ -237,17 +237,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func injectTranscript(_ text: String) {
         defer { recordingWidget.hide() }
 
+        // Checked first, ahead of the permission checks below: if there's nothing to type,
+        // reporting "Accessibility required" or similar would misdirect troubleshooting.
+        // `TextInjector.inject` itself also no-ops on empty text, but silently — without this,
+        // the app would just flip back to idle with no indication anything went wrong, which is
+        // exactly what "recording works, nothing gets typed" looks like from the outside.
+        guard !text.isEmpty else {
+            logger.error("Injection skipped: transcript was empty after processing.")
+            statusItemController.setState(.error(
+                "Nothing to type — the transcript came back empty. If you have Vocabulary replacements set up, check none of them replace a whole phrase with nothing."
+            ))
+            return
+        }
+
         guard PermissionsHelper.isAccessibilityTrusted else {
+            logger.error("Injection blocked: Accessibility permission not granted.")
             statusItemController.setState(.error(
                 "Transcribed but couldn't type it — Accessibility permission required. Grant it in System Settings > Privacy & Security > Accessibility."
             ))
             return
         }
         guard !IsSecureEventInputEnabled() else {
+            logger.error("Injection blocked: secure input mode is active (e.g. a password field has focus).")
             statusItemController.setState(.error("Transcribed but couldn't type it — a secure input field (e.g. a password field) has focus."))
             return
         }
 
+        logger.notice("Injecting transcript (\(text.count, privacy: .public) characters).")
         textInjector.inject(text)
         statusItemController.setState(.idle)
     }
@@ -282,6 +298,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard duration >= minimumRecordingDuration else {
             // Too short to be a real utterance — almost certainly an accidental hotkey tap.
             // Drop it without ever reaching the sidecar.
+            logger.notice("Recording dropped: \(duration, privacy: .public)s is below the \(self.minimumRecordingDuration, privacy: .public)s threshold.")
             try? FileManager.default.removeItem(at: wavURL)
             statusItemController.setState(.idle)
             recordingWidget.hide()
@@ -304,6 +321,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     // concurrently from the settings window while a transcription
                     // is in flight.
                     let finalText = AppSettings.vocabularyEnabled ? self.vocabularyStore.apply(to: text) : text
+                    if finalText != text {
+                        logger.notice("Vocabulary replacements applied: \"\(text, privacy: .public)\" -> \"\(finalText, privacy: .public)\"")
+                    }
                     self.injectTranscript(finalText)
                     self.isBusy = false
                 }
