@@ -98,7 +98,11 @@ final class StatusItemController {
         } else {
             for entry in entries {
                 let item = NSMenuItem()
-                item.view = NSHostingView(rootView: TranscriptHistoryRowView(entry: entry))
+                let hostingView = NSHostingView(rootView: TranscriptHistoryRowView(entry: entry))
+                // NSMenu doesn't Auto Layout custom item views, so without an explicit
+                // frame the hosting view defaults to zero size and the row is invisible.
+                hostingView.frame = CGRect(origin: .zero, size: hostingView.fittingSize)
+                item.view = hostingView
                 submenu.addItem(item)
             }
             submenu.addItem(.separator())
