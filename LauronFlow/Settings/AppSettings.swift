@@ -1,5 +1,14 @@
 import Foundation
 
+/// Whether the push-to-talk hotkey is held for the duration of a recording, or
+/// tapped once to start and again to stop. Read fresh at each hotkey event in
+/// `AppDelegate` rather than cached, so no change notification is needed here.
+enum RecordingMode: String {
+    case hold, toggle
+
+    static let `default`: RecordingMode = .hold
+}
+
 enum AppSettings {
     // Both default to `true` (on) when unset, preserving existing behavior
     // for users upgrading from a version before these toggles existed.
@@ -11,6 +20,32 @@ enum AppSettings {
     static var vocabularyEnabled: Bool {
         get { UserDefaults.standard.object(forKey: "vocabularyEnabled") as? Bool ?? true }
         set { UserDefaults.standard.set(newValue, forKey: "vocabularyEnabled") }
+    }
+
+    static var recordingMode: RecordingMode {
+        get {
+            guard let raw = UserDefaults.standard.string(forKey: "recordingMode"),
+                  let mode = RecordingMode(rawValue: raw)
+            else { return .default }
+            return mode
+        }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: "recordingMode") }
+    }
+
+    /// Bundle identifiers of apps the floating recording widget should never show
+    /// in, even when `showRecordingWidget` is on — e.g. apps where a floating
+    /// overlay would be distracting or visually clash (full-screen video, games).
+    static var excludedApps: [String] {
+        get { UserDefaults.standard.stringArray(forKey: "excludedApps") ?? [] }
+        set { UserDefaults.standard.set(newValue, forKey: "excludedApps") }
+    }
+
+    /// Whether this is the very first launch ever — gates the blocking onboarding
+    /// window. Defaults to `false` so upgraders from a pre-onboarding version don't
+    /// see it retroactively.
+    static var hasCompletedOnboarding: Bool {
+        get { UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") }
+        set { UserDefaults.standard.set(newValue, forKey: "hasCompletedOnboarding") }
     }
 
     // Default to the original hardcoded bindings (Right Option / Control+Option+Z)

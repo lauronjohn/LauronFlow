@@ -4,12 +4,29 @@ import SwiftUI
 /// `AppSettings.recordHotkeyOption`/`undoHotkeyLetter`/`undoHotkeyModifiers`
 /// post on write — see AppDelegate's observers.
 struct ShortcutsSettingsView: View {
+    @State private var recordingMode = AppSettings.recordingMode
     @State private var recordOption = AppSettings.recordHotkeyOption
     @State private var undoLetter = AppSettings.undoHotkeyLetter
     @State private var undoModifiers = AppSettings.undoHotkeyModifiers
 
     var body: some View {
         Form {
+            Section {
+                Picker("Recording Mode", selection: $recordingMode) {
+                    Text("Hold").tag(RecordingMode.hold)
+                    Text("Toggle").tag(RecordingMode.toggle)
+                }
+                .onChange(of: recordingMode) { _, newValue in
+                    AppSettings.recordingMode = newValue
+                }
+            } header: {
+                Text("Recording Mode")
+            } footer: {
+                Text("Hold: keep the hotkey down while speaking, release to stop. Toggle: tap once to start, tap again to stop — the hotkey's release is ignored in this mode.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             Section {
                 Picker("Hotkey", selection: $recordOption) {
                     ForEach(ModifierHotkeyOption.allCases) { option in
@@ -73,9 +90,11 @@ struct ShortcutsSettingsView: View {
     }
 
     private func resetToDefaults() {
+        recordingMode = .default
         recordOption = .default
         undoLetter = .default
         undoModifiers = .default
+        AppSettings.recordingMode = .default
         AppSettings.recordHotkeyOption = .default
         AppSettings.undoHotkeyLetter = .default
         AppSettings.undoHotkeyModifiers = .default

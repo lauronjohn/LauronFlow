@@ -29,6 +29,10 @@ enum SidecarPaths {
         supportDirectory.appendingPathComponent("vocabulary.json")
     }
 
+    static var transcriptHistoryURL: URL {
+        supportDirectory.appendingPathComponent("history.json")
+    }
+
     /// Where `uv run`'s virtual environment is redirected to (via
     /// `UV_PROJECT_ENVIRONMENT` in `SidecarProcessManager`), independent of wherever
     /// `sidecarProjectDirectory` resolves to. Keeps `uv` from ever writing inside the

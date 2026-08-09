@@ -16,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let textInjector = TextInjector()
     private let recordingWidget = RecordingWidgetController()
     private let vocabularyStore = VocabularyStore()
+    private let transcriptHistoryStore = TranscriptHistoryStore()
     private let licenseManager = LicenseManager()
     private lazy var settingsWindowController = SettingsWindowController(store: vocabularyStore, licenseManager: licenseManager)
     private var accessibilityObserverTimer: Timer?
@@ -28,6 +29,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var isBlockedByPermissionError = false
     private var currentRecordingURL: URL?
     private var currentRecordingStartedAt: Date?
+    /// The frontmost app's bundle identifier, captured when recording *starts* —
+    /// not when injection happens, since transcription is async and the user may
+    /// have switched apps by then. Drives per-app widget suppression and
+    /// per-app vocabulary scoping (both should reflect what app the user was
+    /// dictating into, not wherever focus happens to land later).
+    private var currentRecordingFrontmostAppBundleID: String?
 
     /// Recordings shorter than this are treated as an accidental hotkey tap, not a real
     /// utterance, and are dropped without ever reaching the sidecar.
@@ -44,11 +51,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItemController.onBuyLicense = {
             NSWorkspace.shared.open(GumroadConfig.purchaseURL)
         }
+        statusItemController.onClearHistory = { [weak self] in
+            self?.transcriptHistoryStore.clear()
+        }
         statusItemController.updateLicenseState(licenseManager.state)
         licenseManager.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 self?.statusItemController.updateLicenseState(state)
+            }
+            .store(in: &cancellables)
+
+        statusItemController.updateStats()
+        statusItemController.updateHistory(entries: transcriptHistoryStore.entries)
+        transcriptHistoryStore.$entries
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] entries in
+                self?.statusItemController.updateHistory(entries: entries)
             }
             .store(in: &cancellables)
 
@@ -68,12 +87,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         hotkeyManager.onHotkeyDown = { [weak self] in
             DispatchQueue.main.async {
-                _ = self?.beginRecording()
+                self?.handleHotkeyDown()
             }
         }
         hotkeyManager.onHotkeyUp = { [weak self] in
             DispatchQueue.main.async {
-                self?.finishRecordingAndTranscribe()
+                self?.handleHotkeyUp()
             }
         }
 
@@ -107,6 +126,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         audioRecorder.onLevelUpdate = { [weak self] level in
             self?.recordingWidget.updateLevel(level)
+            self?.statusItemController.updateWaveform(level: level)
         }
     }
 
@@ -174,6 +194,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// In hold mode (the default), the hotkey's down-edge starts recording. In toggle
+    /// mode, the down-edge starts recording if idle, or finishes it if one is already
+    /// in progress — the up-edge is ignored entirely in that mode (see `handleHotkeyUp`).
+    /// A toggle-tap that lands while a previous recording is still transcribing falls
+    /// into the "already busy" branch and calls `finishRecordingAndTranscribe()` again;
+    /// that's a safe no-op since `currentRecordingURL` is already nil by then.
+    private func handleHotkeyDown() {
+        switch AppSettings.recordingMode {
+        case .hold:
+            _ = beginRecording()
+        case .toggle:
+            if isBusy {
+                finishRecordingAndTranscribe()
+            } else {
+                _ = beginRecording()
+            }
+        }
+    }
+
+    private func handleHotkeyUp() {
+        guard AppSettings.recordingMode == .hold else { return }
+        finishRecordingAndTranscribe()
+    }
+
     private func runTestTranscription() {
         guard beginRecording() else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
@@ -206,7 +250,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             currentRecordingURL = try audioRecorder.start()
             currentRecordingStartedAt = Date()
-            if AppSettings.showRecordingWidget {
+            currentRecordingFrontmostAppBundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+            let isExcludedApp = currentRecordingFrontmostAppBundleID.map { AppSettings.excludedApps.contains($0) } ?? false
+            if AppSettings.showRecordingWidget && !isExcludedApp {
                 recordingWidget.show()
             }
             return true
@@ -215,6 +261,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             statusItemController.setState(.error("\(error)"))
             isBusy = false
             currentRecordingURL = nil
+            currentRecordingFrontmostAppBundleID = nil
             return false
         }
     }
@@ -294,6 +341,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let duration = currentRecordingStartedAt.map { Date().timeIntervalSince($0) } ?? minimumRecordingDuration
         currentRecordingStartedAt = nil
+        let frontmostAppBundleID = currentRecordingFrontmostAppBundleID
+        currentRecordingFrontmostAppBundleID = nil
 
         guard duration >= minimumRecordingDuration else {
             // Too short to be a real utterance — almost certainly an accidental hotkey tap.
@@ -320,9 +369,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     // vocabularyStore.entries is @Published and can be mutated
                     // concurrently from the settings window while a transcription
                     // is in flight.
-                    let finalText = AppSettings.vocabularyEnabled ? self.vocabularyStore.apply(to: text) : text
+                    let finalText = AppSettings.vocabularyEnabled
+                        ? self.vocabularyStore.apply(to: text, for: frontmostAppBundleID)
+                        : text
                     if finalText != text {
                         logger.notice("Vocabulary replacements applied: \"\(text, privacy: .public)\" -> \"\(finalText, privacy: .public)\"")
+                    }
+                    // Recorded as soon as a non-empty transcript exists, before
+                    // injectTranscript's own guards run: a silently-failed injection
+                    // (e.g. a secure field had focus) is exactly the case where
+                    // recovering the text from history matters most, and "words
+                    // dictated" is about what was said, not whether it landed.
+                    if !finalText.isEmpty {
+                        UsageStats.recordSession(wordCount: finalText.split(separator: " ").count)
+                        self.statusItemController.updateStats()
+                        self.transcriptHistoryStore.append(text: finalText, appBundleID: frontmostAppBundleID)
                     }
                     self.injectTranscript(finalText)
                     self.isBusy = false

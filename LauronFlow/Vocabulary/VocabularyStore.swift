@@ -28,10 +28,14 @@ final class VocabularyStore: ObservableObject {
 
     /// Applies entries in list order over the accumulating result, so an earlier
     /// entry's output can be re-matched by a later entry (sed-script semantics) —
-    /// intentional, not a bug.
-    func apply(to text: String) -> String {
+    /// intentional, not a bug. `bundleID` is the frontmost app's bundle identifier
+    /// when recording started (nil if unknown); entries scoped to a *different* app
+    /// are skipped in place, preserving that ordering for the entries that do apply.
+    func apply(to text: String, for bundleID: String? = nil) -> String {
         var result = text
         for entry in entries {
+            if let entryScope = entry.appBundleID, entryScope != bundleID { continue }
+
             let from = entry.from.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !from.isEmpty else { continue }
 

@@ -1,5 +1,8 @@
 import AppKit
 import Carbon.HIToolbox
+import os
+
+private let logger = Logger(subsystem: "com.lauronjohn.LauronFlow", category: "textInjection")
 
 /// Types the dictated transcript into whatever app currently has focus by
 /// swapping the pasteboard and synthesizing a Cmd+V, then restoring the
@@ -110,7 +113,10 @@ final class TextInjector {
         guard
             let keyDown = CGEvent(keyboardEventSource: source, virtualKey: vKeyCode, keyDown: true),
             let keyUp = CGEvent(keyboardEventSource: source, virtualKey: vKeyCode, keyDown: false)
-        else { return }
+        else {
+            logger.error("Failed to construct synthetic Cmd+V CGEvent — injection silently did nothing.")
+            return
+        }
 
         keyDown.flags = .maskCommand
         keyUp.flags = .maskCommand
@@ -126,7 +132,10 @@ final class TextInjector {
         guard
             let keyDown = CGEvent(keyboardEventSource: source, virtualKey: deleteKeyCode, keyDown: true),
             let keyUp = CGEvent(keyboardEventSource: source, virtualKey: deleteKeyCode, keyDown: false)
-        else { return }
+        else {
+            logger.error("Failed to construct synthetic backspace CGEvent — undo silently did nothing.")
+            return
+        }
 
         for _ in 0..<count {
             keyDown.post(tap: .cghidEventTap)

@@ -1,7 +1,7 @@
 import SwiftUI
 
 private enum SettingsPane: String, CaseIterable, Identifiable, Hashable {
-    case general, vocabulary, shortcuts, license
+    case general, vocabulary, excludedApps, shortcuts, license
 
     var id: String { rawValue }
 
@@ -9,6 +9,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .general: return "General"
         case .vocabulary: return "Vocabulary"
+        case .excludedApps: return "Excluded Apps"
         case .shortcuts: return "Shortcuts"
         case .license: return "License"
         }
@@ -18,6 +19,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .general: return "gearshape"
         case .vocabulary: return "text.book.closed"
+        case .excludedApps: return "app.badge"
         case .shortcuts: return "keyboard"
         case .license: return "key"
         }
@@ -53,6 +55,7 @@ struct SettingsView: View {
                     switch pane {
                     case .general: GeneralSettingsView()
                     case .vocabulary: VocabularySettingsView(store: vocabularyStore)
+                    case .excludedApps: ExcludedAppsSettingsView()
                     case .shortcuts: ShortcutsSettingsView()
                     case .license: LicenseSettingsView(licenseManager: licenseManager)
                     }

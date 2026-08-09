@@ -1,13 +1,25 @@
 import AppKit
+import SwiftUI
 
 final class StatusItemController {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let licenseStatusItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private let buyLicenseItem = NSMenuItem(title: "Buy License…", action: #selector(handleBuyLicense), keyEquivalent: "")
     private let statusMessageItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private let statsItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private let historyItem = NSMenuItem(title: "Recent Transcripts", action: nil, keyEquivalent: "")
+    private let clearHistoryItem = NSMenuItem(title: "Clear History", action: #selector(handleClearHistory), keyEquivalent: "")
     var onTestTranscription: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     var onBuyLicense: (() -> Void)?
+    var onClearHistory: (() -> Void)?
+
+    private var currentState: AppState = .idle
+    private var waveformLevels: [Float] = []
+    private var lastWaveformRedraw: Date?
+    // Levels arrive far more often (per audio buffer) than an 18px icon needs to
+    // redraw; this keeps CPU/redraw cost negligible without any visible lag.
+    private let waveformRedrawInterval: TimeInterval = 0.09
 
     init() {
         statusItem.button?.image = Self.image(for: .idle)
@@ -15,7 +27,15 @@ final class StatusItemController {
     }
 
     func setState(_ state: AppState) {
+        currentState = state
         statusItem.button?.image = Self.image(for: state)
+
+        if case .recording = state {
+            // Start each recording from a clean, flat waveform rather than whatever
+            // levels a previous recording left behind.
+            waveformLevels = []
+            lastWaveformRedraw = nil
+        }
 
         switch state {
         case .error(let message):
@@ -36,6 +56,55 @@ final class StatusItemController {
         default:
             statusMessageItem.isHidden = true
         }
+    }
+
+    /// Feeds a live RMS level into the menu bar icon's mini-waveform. No-ops outside
+    /// `.recording` — independent of `AppSettings.showRecordingWidget`, which only
+    /// controls the floating widget, not this lower-weight indicator.
+    func updateWaveform(level: Float) {
+        guard case .recording = currentState else { return }
+
+        let now = Date()
+        if let last = lastWaveformRedraw, now.timeIntervalSince(last) < waveformRedrawInterval {
+            return
+        }
+        lastWaveformRedraw = now
+
+        waveformLevels.append(level)
+        if waveformLevels.count > WaveformIconRenderer.barCount {
+            waveformLevels.removeFirst(waveformLevels.count - WaveformIconRenderer.barCount)
+        }
+        statusItem.button?.image = WaveformIconRenderer.image(for: waveformLevels)
+    }
+
+    /// Refreshes the "N words · N sessions today" menu row. Called once at launch
+    /// (so the menu isn't empty before the first dictation) and after every
+    /// completed dictation.
+    func updateStats() {
+        let words = UsageStats.wordsToday
+        let sessions = UsageStats.sessionsToday
+        statsItem.title = "\(words) word\(words == 1 ? "" : "s") · \(sessions) session\(sessions == 1 ? "" : "s") today"
+    }
+
+    /// Rebuilds the "Recent Transcripts" submenu from the current history entries.
+    /// `entries` is expected newest-first (already capped) — one hosted SwiftUI row
+    /// per entry, plus a "Clear History" action at the bottom when non-empty.
+    func updateHistory(entries: [TranscriptHistoryEntry]) {
+        let submenu = NSMenu()
+        if entries.isEmpty {
+            let emptyItem = NSMenuItem(title: "No transcripts yet", action: nil, keyEquivalent: "")
+            emptyItem.isEnabled = false
+            submenu.addItem(emptyItem)
+        } else {
+            for entry in entries {
+                let item = NSMenuItem()
+                item.view = NSHostingView(rootView: TranscriptHistoryRowView(entry: entry))
+                submenu.addItem(item)
+            }
+            submenu.addItem(.separator())
+            submenu.addItem(clearHistoryItem)
+        }
+        historyItem.submenu = submenu
     }
 
     func updateLicenseState(_ state: LicenseState) {
@@ -99,6 +168,15 @@ final class StatusItemController {
 
         menu.addItem(.separator())
 
+        statsItem.isEnabled = false
+        menu.addItem(statsItem)
+
+        updateHistory(entries: [])
+        menu.addItem(historyItem)
+        clearHistoryItem.target = self
+
+        menu.addItem(.separator())
+
         statusMessageItem.isEnabled = false
         statusMessageItem.isHidden = true
         menu.addItem(statusMessageItem)
@@ -130,5 +208,9 @@ final class StatusItemController {
 
     @objc private func handleBuyLicense() {
         onBuyLicense?()
+    }
+
+    @objc private func handleClearHistory() {
+        onClearHistory?()
     }
 }
