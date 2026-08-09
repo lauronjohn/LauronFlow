@@ -88,16 +88,25 @@ Accessibility permission prompts.
 - Hold **Right Option (⌥)** (configurable), speak, release — the transcript is typed
   wherever your cursor is focused. A floating widget shows a live waveform while
   recording, and the menu bar icon shows live download/loading progress on first launch.
+  Prefer not to hold the key down? Switch to **Toggle** mode in Settings → Shortcuts:
+  tap once to start, tap again to stop.
 - An undo hotkey (default **⌃ Control + ⌥ Option + Z**, configurable) removes the last
   thing LauronFlow typed, in case a transcription is wrong.
+- The menu bar dropdown shows a **"N words · N sessions today"** counter and a
+  **Recent Transcripts** submenu with your last 20 dictations — each with a timestamp,
+  the app it was typed into, and a one-click copy button — plus a Clear History action.
 - Menu bar icon shows state (idle / starting up / recording / transcribing / error) and
-  has a **Settings…** window with four panes:
+  has a **Settings…** window with five panes:
   - **General** — Launch at Login, show/hide the floating recording widget, and a quick
     on/off switch for vocabulary replacements.
   - **Vocabulary** — a custom find/replace list for words the model consistently
-    mishears (names, jargon, etc.), applied before the transcript is typed.
-  - **Shortcuts** — pick your own record and undo key combos; defaults match the ones
-    above. Changes apply immediately, no restart needed.
+    mishears (names, jargon, etc.), applied before the transcript is typed. Each entry
+    can apply everywhere or be scoped to one specific app.
+  - **Excluded Apps** — pick apps where the floating waveform widget should stay
+    hidden while recording (dictation itself still works there — this only hides the
+    overlay).
+  - **Shortcuts** — pick your own record and undo key combos, and choose Hold vs.
+    Toggle recording mode. Changes apply immediately, no restart needed.
   - **License** — trial days remaining, license key activation, and a "Buy License…"
     link.
 
