@@ -37,12 +37,15 @@ so there's no separate repo to clone.
    ```
    brew install uv ffmpeg
    ```
-4. Launch LauronFlow from `/Applications`. First launch downloads the ~2.3GB Parakeet
-   model from Hugging Face, so it needs internet and can take a few minutes — the menu
-   bar icon and its dropdown show live download progress while that happens.
+4. Launch LauronFlow from `/Applications`. A one-time onboarding window appears first,
+   walking through the hotkey, undo, and the permission prompts you're about to see —
+   click "Get Started" to continue.
 5. Grant permissions when prompted: **Microphone** and **Accessibility** (System
    Settings → Privacy & Security). Accessibility is required for typing the transcript
    into other apps — without it LauronFlow can transcribe but can't inject text.
+6. First launch downloads the ~2.3GB Parakeet model from Hugging Face, so it needs
+   internet and can take a few minutes — the menu bar icon and its dropdown show live
+   download progress while that happens.
 
 Working on the sidecar itself and want the app to use your own checkout instead of the
 bundled copy? Clone [lauronflow-sidecar](https://github.com/lauronjohn/lauronflow-sidecar)
@@ -77,7 +80,8 @@ cd LauronFlow
 `/Applications/LauronFlow.app`, and records this checkout's `sidecar/` path so the app
 can find it. Re-run it any time you pull new changes.
 
-Grant Microphone + Accessibility permissions on first launch, same as Option A.
+Same first-launch flow as Option A: the onboarding window, then the Microphone +
+Accessibility permission prompts.
 
 ## Using it
 
