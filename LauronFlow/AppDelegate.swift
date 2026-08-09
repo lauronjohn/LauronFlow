@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let transcriptHistoryStore = TranscriptHistoryStore()
     private let licenseManager = LicenseManager()
     private lazy var settingsWindowController = SettingsWindowController(store: vocabularyStore, licenseManager: licenseManager)
+    private let onboardingWindowController = OnboardingWindowController()
     private var accessibilityObserverTimer: Timer?
     private var sidecarStartupTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
@@ -71,8 +72,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
 
-        if licenseManager.isFirstLaunch {
-            showTrialStartedNotice()
+        if !AppSettings.hasOnboardingPreferenceStored, !licenseManager.isFirstLaunch {
+            // Upgrading from a pre-onboarding version — don't show onboarding retroactively.
+            AppSettings.hasCompletedOnboarding = true
+        }
+        if !AppSettings.hasCompletedOnboarding {
+            onboardingWindowController.showBlocking()
         }
 
         sidecarManager.onCrash = { [weak self] message in
@@ -159,19 +164,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         guard !isBusy, !isBlockedByPermissionError else { return }
         statusItemController.setState(.starting(SidecarStatus.read()?.displayText ?? "Starting up…"))
-    }
-
-    /// Shown once, on the very launch that starts the trial clock (see
-    /// `LicenseManager.isFirstLaunch`) — activates the app first since this is an
-    /// LSUIElement (accessory) app with no Dock icon, so the alert would otherwise
-    /// appear behind whatever app was frontmost.
-    private func showTrialStartedNotice() {
-        NSApp.activate()
-        let alert = NSAlert()
-        alert.messageText = "Welcome to LauronFlow"
-        alert.informativeText = "Your 14-day free trial has started. Hold Right Option (⌥) anywhere to dictate — everything runs on-device, nothing is uploaded. Buy a license anytime from the menu bar icon > Settings > License."
-        alert.addButton(withTitle: "Get Started")
-        alert.runModal()
     }
 
     private func handleAccessibilityTrustChange(_ trusted: Bool) {

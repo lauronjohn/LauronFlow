@@ -40,12 +40,21 @@ enum AppSettings {
         set { UserDefaults.standard.set(newValue, forKey: "excludedApps") }
     }
 
-    /// Whether this is the very first launch ever — gates the blocking onboarding
-    /// window. Defaults to `false` so upgraders from a pre-onboarding version don't
-    /// see it retroactively.
+    /// Gates the blocking onboarding window — shown once, and again on any later
+    /// launch if the user quit before finishing it. `AppDelegate` grandfathers in
+    /// upgraders from a pre-onboarding version using `hasOnboardingPreferenceStored`
+    /// below, so this defaulting to `false` doesn't show it to them retroactively.
     static var hasCompletedOnboarding: Bool {
         get { UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") }
         set { UserDefaults.standard.set(newValue, forKey: "hasCompletedOnboarding") }
+    }
+
+    /// Whether `hasCompletedOnboarding` has ever been explicitly written, as opposed
+    /// to just reading `false` because the key was never set. Distinguishing these
+    /// is what lets `AppDelegate` tell "brand new install" apart from "existing
+    /// install from before onboarding existed" on the first launch after upgrading.
+    static var hasOnboardingPreferenceStored: Bool {
+        UserDefaults.standard.object(forKey: "hasCompletedOnboarding") != nil
     }
 
     // Default to the original hardcoded bindings (Right Option / Control+Option+Z)

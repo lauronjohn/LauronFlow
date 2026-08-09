@@ -22,6 +22,7 @@
 		496B714541181FDF148D5FE7 /* SidecarProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */; };
 		4AF8E30175C767F449640BFE /* LauronFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B878CFC778B40D8D0ACBC86 /* LauronFlowApp.swift */; };
 		5F0F2B7830275A68DAF72014 /* VocabularyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AC9E26F17D1422D65FDD01 /* VocabularyStore.swift */; };
+		5FD89B3B58614AA85B6D107C /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F9C4BF8E58A6724588E8C1 /* OnboardingWindowController.swift */; };
 		63F945D4D3D0479A00238CD8 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0006A3DC4A779CA9F7722007 /* StatusItemController.swift */; };
 		694F28015A04D25CEFDFAE12 /* VocabularyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 747DAEEACA8432C0D7F33311 /* VocabularyEntry.swift */; };
 		77A174CF04A8AE37DF9057C3 /* UndoHotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC960FFCC3E84E6DB683E33 /* UndoHotkeyManager.swift */; };
@@ -33,6 +34,7 @@
 		9511F8F4302FD4302AC34C05 /* SidecarPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6DB0FD58C20D4B745FAA0A /* SidecarPaths.swift */; };
 		AB49009D5E984F86D9F53E42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01186D00103B57E9507E9A21 /* HotkeyManager.swift */; };
 		ABCF32D0BC41E235336C7399 /* SidecarStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB24E88FEA12F4A474F5116 /* SidecarStatus.swift */; };
+		B206CFE7480FA10DEE54D7E9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C72416F17844811DCB4BE0A5 /* OnboardingView.swift */; };
 		BB82C015B3411400D3698C11 /* TranscriptHistoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943E6FA83FD269E007BF4BDC /* TranscriptHistoryEntry.swift */; };
 		DF84814077FD0267E79A1FD6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F61F26D2CB329283535C10 /* SettingsView.swift */; };
 		E45CC940B3D2695D76FC79DB /* TranscriptHistoryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E6144A01DBD9B9B4C28FF7 /* TranscriptHistoryRowView.swift */; };
@@ -73,6 +75,7 @@
 		943E6FA83FD269E007BF4BDC /* TranscriptHistoryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptHistoryEntry.swift; sourceTree = "<group>"; };
 		95E1BE584F23B5C798963FE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97AD6538DF1E9B73A032D32C /* GumroadConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GumroadConfig.swift; sourceTree = "<group>"; };
+		97F9C4BF8E58A6724588E8C1 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		99E47E054E085D0B07CE9C9E /* LauronFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LauronFlow.entitlements; sourceTree = "<group>"; };
 		9BC9F11099A034010D58C857 /* TranscriptHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptHistoryStore.swift; sourceTree = "<group>"; };
 		9FB24E88FEA12F4A474F5116 /* SidecarStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarStatus.swift; sourceTree = "<group>"; };
@@ -83,6 +86,7 @@
 		C1AC9E26F17D1422D65FDD01 /* VocabularyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyStore.swift; sourceTree = "<group>"; };
 		C5316948DA116EA7F45E4B82 /* SidecarProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidecarProcessManager.swift; sourceTree = "<group>"; };
 		C5DCA1A0150043B4CA9AD727 /* VocabularySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularySettingsView.swift; sourceTree = "<group>"; };
+		C72416F17844811DCB4BE0A5 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		C8E6144A01DBD9B9B4C28FF7 /* TranscriptHistoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptHistoryRowView.swift; sourceTree = "<group>"; };
 		C9B904F0B1827F0A462C2226 /* RecordingWidgetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingWidgetController.swift; sourceTree = "<group>"; };
 		F0BD69C800D9B90F17D04AFC /* LauronFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LauronFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,6 +134,7 @@
 				D07BF609E230EFEFB24181CF /* History */,
 				6B9F59F56EFBFD5A34EE3114 /* Hotkey */,
 				D59552B41FFD788444010B36 /* Licensing */,
+				DC928880C49F2AF8FE56C190 /* Onboarding */,
 				F8D1658C8317C0F34B2BE63A /* Permissions */,
 				A9424BD24245A95D82098994 /* RecordingWidget */,
 				79681930D00D0CA3C464B9B2 /* Settings */,
@@ -233,6 +238,15 @@
 				0C0861C0EE9D324B61AAA3F2 /* LicenseManager.swift */,
 			);
 			path = Licensing;
+			sourceTree = "<group>";
+		};
+		DC928880C49F2AF8FE56C190 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				C72416F17844811DCB4BE0A5 /* OnboardingView.swift */,
+				97F9C4BF8E58A6724588E8C1 /* OnboardingWindowController.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		F548CEB9618B073912192900 /* Stats */ = {
@@ -368,6 +382,8 @@
 				4AF8E30175C767F449640BFE /* LauronFlowApp.swift in Sources */,
 				806A8078C52606119220BDD4 /* LicenseManager.swift in Sources */,
 				EC9F8B2457003CB6A554F777 /* LicenseSettingsView.swift in Sources */,
+				B206CFE7480FA10DEE54D7E9 /* OnboardingView.swift in Sources */,
+				5FD89B3B58614AA85B6D107C /* OnboardingWindowController.swift in Sources */,
 				E68859F4CE8D4A6A1DB9CA61 /* PermissionsHelper.swift in Sources */,
 				7F2F7AA6341E89C5B0BA2E87 /* RecordingWidgetController.swift in Sources */,
 				F2D286025311519BAE1E14A8 /* RecordingWidgetView.swift in Sources */,
