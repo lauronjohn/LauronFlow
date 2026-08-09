@@ -102,6 +102,11 @@ final class StatusItemController {
                 submenu.addItem(item)
             }
             submenu.addItem(.separator())
+            // Rebuilt fresh on every call, but `clearHistoryItem` is a single shared
+            // instance reused across rebuilds — it must be pulled out of whichever
+            // submenu it's still sitting in first, since an NSMenuItem can only belong
+            // to one NSMenu at a time and `addItem` throws otherwise.
+            clearHistoryItem.menu?.removeItem(clearHistoryItem)
             submenu.addItem(clearHistoryItem)
         }
         historyItem.submenu = submenu
