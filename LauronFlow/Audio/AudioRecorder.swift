@@ -1,3 +1,4 @@
+import Accelerate
 import AVFoundation
 import Foundation
 
@@ -13,6 +14,7 @@ final class AudioRecorder {
     private var audioFile: AVAudioFile?
     private var converter: AVAudioConverter?
     private var targetFormat: AVAudioFormat?
+    private var conversionBuffer: AVAudioPCMBuffer?
     private(set) var isRecording = false
 
     /// Fired on the main thread with a 0...1-ish RMS level for each tap buffer, for a live
@@ -58,6 +60,18 @@ final class AudioRecorder {
         }
         self.converter = converter
 
+        // Pre-allocate the 16kHz mono output buffer once and reuse it for every tap
+        // callback, instead of allocating a fresh AVAudioPCMBuffer ~12x/second for the
+        // life of the recording. 8192 frames = 0.5s at 16kHz, far beyond the largest
+        // single tap chunk (4096 input frames) at any supported input rate.
+        guard let conversionBuffer = AVAudioPCMBuffer(
+            pcmFormat: targetFormat,
+            frameCapacity: 8192
+        ) else {
+            throw AudioRecorderError.formatCreationFailed
+        }
+        self.conversionBuffer = conversionBuffer
+
         inputNode.installTap(onBus: 0, bufferSize: 4096, format: inputFormat) { [weak self] buffer, _ in
             self?.process(buffer: buffer)
         }
@@ -74,6 +88,7 @@ final class AudioRecorder {
         engine.stop()
         audioFile = nil
         converter = nil
+        conversionBuffer = nil
         isRecording = false
     }
 
@@ -85,17 +100,15 @@ final class AudioRecorder {
             }
         }
 
-        guard let converter, let audioFile, let targetFormat else { return }
-        let ratio = targetFormat.sampleRate / buffer.format.sampleRate
-        let capacity = AVAudioFrameCount((Double(buffer.frameLength) * ratio).rounded(.up))
-        guard let outputBuffer = AVAudioPCMBuffer(
-            pcmFormat: targetFormat,
-            frameCapacity: max(capacity, 1)
-        ) else { return }
+        guard let converter, let audioFile, let conversionBuffer else { return }
+        // AVAudioConverter expects the output buffer's frameLength to equal its
+        // frameCapacity before each call; it then rewrites frameLength to the number
+        // of frames actually converted.
+        conversionBuffer.frameLength = conversionBuffer.frameCapacity
 
         var conversionError: NSError?
         var consumed = false
-        converter.convert(to: outputBuffer, error: &conversionError) { _, inputStatus in
+        converter.convert(to: conversionBuffer, error: &conversionError) { _, inputStatus in
             if consumed {
                 inputStatus.pointee = .noDataNow
                 return nil
@@ -109,26 +122,25 @@ final class AudioRecorder {
             NSLog("AudioRecorder conversion error: \(conversionError)")
             return
         }
-        do {
-            try audioFile.write(from: outputBuffer)
-        } catch {
-            NSLog("AudioRecorder write error: \(error)")
+        if conversionBuffer.frameLength > 0 {
+            do {
+                try audioFile.write(from: conversionBuffer)
+            } catch {
+                NSLog("AudioRecorder write error: \(error)")
+            }
         }
     }
 
-    /// Root-mean-square of the buffer's first channel, roughly normalized so typical speech
-    /// lands well under 1.0 (headroom for the widget's animation curve to react to peaks).
+    /// Root-mean-square of the buffer's first channel via vDSP, roughly normalized so
+    /// typical speech lands well under 1.0 (headroom for the widget's animation curve
+    /// to react to peaks).
     private static func rmsLevel(of buffer: AVAudioPCMBuffer) -> Float {
         guard let channelData = buffer.floatChannelData else { return 0 }
         let frameLength = Int(buffer.frameLength)
         guard frameLength > 0 else { return 0 }
 
-        let samples = channelData[0]
-        var sumOfSquares: Float = 0
-        for i in 0..<frameLength {
-            let sample = samples[i]
-            sumOfSquares += sample * sample
-        }
-        return (sumOfSquares / Float(frameLength)).squareRoot()
+        var meanSquare: Float = 0
+        vDSP_measqv(channelData[0], 1, &meanSquare, vDSP_Length(frameLength))
+        return meanSquare.squareRoot()
     }
 }

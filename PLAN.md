@@ -7,8 +7,9 @@ macOS 26.5). Hold a global hotkey anywhere on macOS, speak, release — the tran
 typed into whatever app has focus. No cloud calls, no telemetry.
 
 Confirmed decisions (not up for re-litigation during implementation):
-- STT engine: NVIDIA Parakeet TDT v3 (`mlx-community/parakeet-tdt-0.6b-v3`) via the
-  `parakeet-mlx` Python package (Apple MLX, Apple Silicon only).
+- STT engine: NVIDIA Parakeet TDT v3 (`animaslabs/parakeet-tdt-0.6b-v3-mlx-8bit`,
+  8-bit quantized — ~0.9GB weights vs 2.3GB fp32, loaded via `nn.quantize()` +
+  `load_weights`) via the `parakeet-mlx` Python package (Apple MLX, Apple Silicon only).
 - No LLM cleanup pass — raw Parakeet output (already punctuated/cased) is typed as-is.
 - Native Swift/SwiftUI menu bar app for hotkey + recording + text injection + UI.
 - Since Parakeet has no mature Swift/MLX-Swift port, the Swift app talks to a bundled
@@ -49,7 +50,7 @@ LauronFlow/
     ├── pyproject.toml                 # dep: parakeet-mlx  (ffmpeg via brew, not pip)
     └── src/lauronflow_sidecar/
         ├── __main__.py                # loads model once, starts server
-        ├── model.py                   # from_pretrained("mlx-community/parakeet-tdt-0.6b-v3")
+        ├── model.py                   # 8-bit quantized load + fast WAV decode + MLX memory caps
         ├── server.py                  # UnixStreamServer, newline-delimited JSON protocol
         └── protocol.py
 ```

@@ -8,6 +8,16 @@ private let logger = Logger(subsystem: "com.lauronjohn.LauronFlow", category: "v
 final class VocabularyStore: ObservableObject {
     @Published var entries: [VocabularyEntry] = []
 
+    /// Compiled-regex cache keyed by entry identity. `apply(to:for:)` previously
+    /// compiled every pattern on every dictation; compiling is the expensive part of
+    /// `NSRegularExpression` and patterns change only when the user edits settings.
+    /// Stale entries for deleted vocabulary lines are evicted in `save()`.
+    private struct CachedRegex {
+        let pattern: String
+        let regex: NSRegularExpression
+    }
+    private var compiledRegexCache: [UUID: CachedRegex] = [:]
+
     init() {
         guard let data = try? Data(contentsOf: SidecarPaths.vocabularyURL) else { return }
         do {
@@ -24,6 +34,7 @@ final class VocabularyStore: ObservableObject {
         )
         guard let data = try? JSONEncoder().encode(entries) else { return }
         try? data.write(to: SidecarPaths.vocabularyURL)
+        evictStaleRegexCache()
     }
 
     /// Applies entries in list order over the accumulating result, so an earlier
@@ -39,12 +50,32 @@ final class VocabularyStore: ObservableObject {
             let from = entry.from.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !from.isEmpty else { continue }
 
-            let pattern = "\\b" + NSRegularExpression.escapedPattern(for: from) + "\\b"
-            guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { continue }
+            guard let regex = compiledRegex(for: entry, from: from) else { continue }
 
             let range = NSRange(result.startIndex..<result.endIndex, in: result)
             result = regex.stringByReplacingMatches(in: result, range: range, withTemplate: NSRegularExpression.escapedTemplate(for: entry.to))
         }
         return result
+    }
+
+    /// Returns the compiled regex for an entry, compiling and caching it on first use.
+    /// The cache is validated against the entry's current `from` pattern, so an entry
+    /// edited in-place (same `id`, new pattern) recompiles instead of reusing a stale one.
+    private func compiledRegex(for entry: VocabularyEntry, from: String) -> NSRegularExpression? {
+        if let cached = compiledRegexCache[entry.id], cached.pattern == from {
+            return cached.regex
+        }
+
+        let pattern = "\\b" + NSRegularExpression.escapedPattern(for: from) + "\\b"
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return nil }
+        compiledRegexCache[entry.id] = CachedRegex(pattern: from, regex: regex)
+        return regex
+    }
+
+    private func evictStaleRegexCache() {
+        let liveIDs = Set(entries.map(\.id))
+        for key in compiledRegexCache.keys where !liveIDs.contains(key) {
+            compiledRegexCache.removeValue(forKey: key)
+        }
     }
 }

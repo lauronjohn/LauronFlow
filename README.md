@@ -8,9 +8,9 @@ A local, fully-offline voice dictation app for macOS (Apple Silicon). Hold a glo
 hotkey anywhere, speak, release — the transcript is typed into whatever app has focus.
 No cloud calls, no telemetry, no account.
 
-Speech-to-text runs on-device via [Parakeet TDT](https://huggingface.co/mlx-community/parakeet-tdt-0.6b-v3)
-(NVIDIA, via Apple's MLX), spawned as a local Python sidecar process the Swift menu bar
-app talks to over a Unix socket.
+Speech-to-text runs on-device via [Parakeet TDT](https://huggingface.co/animaslabs/parakeet-tdt-0.6b-v3-mlx-8bit)
+(NVIDIA, via Apple's MLX, 8-bit quantized), spawned as a local Python sidecar process
+the Swift menu bar app talks to over a Unix socket.
 
 **Requirements:** Apple Silicon Mac, macOS 14+.
 
@@ -43,9 +43,9 @@ so there's no separate repo to clone.
 5. Grant permissions when prompted: **Microphone** and **Accessibility** (System
    Settings → Privacy & Security). Accessibility is required for typing the transcript
    into other apps — without it LauronFlow can transcribe but can't inject text.
-6. First launch downloads the ~2.3GB Parakeet model from Hugging Face, so it needs
-   internet and can take a few minutes — the menu bar icon and its dropdown show live
-   download progress while that happens.
+6. First launch downloads the ~900MB Parakeet model (8-bit quantized) from Hugging
+   Face, so it needs internet and can take a few minutes — the menu bar icon and its
+   dropdown show live download progress while that happens.
 
 Working on the sidecar itself and want the app to use your own checkout instead of the
 bundled copy? Clone [lauronflow-sidecar](https://github.com/lauronjohn/lauronflow-sidecar)

@@ -1,9 +1,16 @@
+import CryptoKit
 import Foundation
 
 final class SidecarProcessManager {
     private var process: Process?
     private let queue = DispatchQueue(label: "com.lauronjohn.LauronFlow.sidecar")
     var onCrash: ((String) -> Void)?
+
+    /// Rotate `sidecar.log` once it passes this size: the sidecar logs to stderr on
+    /// every request, so without a cap the file grows without bound across a long-lived
+    /// install. Rotation is drop-oldest (delete and recreate) — the log is a debug aid,
+    /// not a record worth keeping.
+    private let logRotationThreshold: UInt64 = 2 * 1024 * 1024
 
     // Crash auto-restart (M6): retry a small, capped number of times with a short
     // backoff, then give up and report via `onCrash`. `generation` is bumped on every
@@ -53,11 +60,11 @@ final class SidecarProcessManager {
     /// rebuilds our own handful of small .py files, not the heavy ML dependencies
     /// (mlx, parakeet-mlx, etc.), which stay untouched and cached. Runs synchronously —
     /// fine here since `launch()` already executes off the main thread on `queue`.
-    private func resyncSidecarPackage(uv: URL) {
+    private func resyncSidecarPackage(uv: URL, sidecarDir: URL) {
         let task = Process()
         task.executableURL = uv
         task.arguments = ["sync", "--reinstall-package", "lauronflow-sidecar"]
-        task.currentDirectoryURL = SidecarPaths.sidecarProjectDirectory
+        task.currentDirectoryURL = sidecarDir
 
         var env = ProcessInfo.processInfo.environment
         env["UV_NO_EDITABLE"] = "1"
@@ -70,6 +77,61 @@ final class SidecarProcessManager {
         task.waitUntilExit()
     }
 
+    /// SHA-256 of every file `uv sync` could reinstall (our `src/` python files,
+    /// `pyproject.toml`, and `uv.lock`), so a launch can skip the sync step entirely
+    /// when nothing changed since the last one. Stored next to the venv so it
+    /// naturally goes stale if the venv is ever deleted.
+    private func sidecarSourceHash(sidecarDir: URL) -> String? {
+        guard let enumerator = FileManager.default.enumerator(
+            at: sidecarDir.appendingPathComponent("src"),
+            includingPropertiesForKeys: [.isRegularFileKey],
+            options: [.skipsHiddenFiles]
+        ) else { return nil }
+
+        var hasher = SHA256()
+        for case let file as URL in enumerator {
+            guard file.pathExtension == "py" else { continue }
+            guard let data = try? Data(contentsOf: file) else { return nil }
+            hasher.update(data: data)
+        }
+        for filename in ["pyproject.toml", "uv.lock"] {
+            if let data = try? Data(contentsOf: sidecarDir.appendingPathComponent(filename)) {
+                hasher.update(data: data)
+            }
+        }
+        return hasher.finalize().map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// `uv sync` on every app launch costs real seconds of startup (uv re-checks the
+    /// resolved environment) even when nothing changed. Only re-sync when the sidecar
+    /// source has actually changed since the recorded hash — first launch and venv-less
+    /// installs have no hash recorded, so they always sync.
+    private func sidecarNeedsSync(sidecarDir: URL) -> Bool {
+        guard let hash = sidecarSourceHash(sidecarDir: sidecarDir) else { return true }
+        let stored = (try? String(contentsOf: SidecarPaths.sidecarSyncHashURL, encoding: .utf8))?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard stored == hash else { return true }
+        // Hash matches, but the venv it was synced into must still exist.
+        let venvPython = SidecarPaths.sidecarVenvURL.appendingPathComponent("bin/python")
+        return !FileManager.default.isExecutableFile(atPath: venvPython.path)
+    }
+
+    private func recordSidecarSync(sidecarDir: URL) {
+        guard let hash = sidecarSourceHash(sidecarDir: sidecarDir) else { return }
+        try? FileManager.default.createDirectory(
+            at: SidecarPaths.supportDirectory,
+            withIntermediateDirectories: true
+        )
+        try? hash.write(to: SidecarPaths.sidecarSyncHashURL, atomically: true, encoding: .utf8)
+    }
+
+    private func rotateLogIfNeeded() {
+        let attributes = try? FileManager.default.attributesOfItem(atPath: SidecarPaths.logURL.path)
+        guard let size = attributes?[.size] as? NSNumber,
+              size.uint64Value > logRotationThreshold else { return }
+        try? FileManager.default.removeItem(at: SidecarPaths.logURL)
+    }
+
     private func launch() {
         generation += 1
         let myGeneration = generation
@@ -79,18 +141,26 @@ final class SidecarProcessManager {
             return
         }
 
+        guard let sidecarDir = SidecarPaths.sidecarProjectDirectory else {
+            onCrash?("Could not locate the sidecar project. If you moved the LauronFlow checkout, run `./configure-sidecar.sh /path/to/sidecar` from it and relaunch.")
+            return
+        }
+
         try? FileManager.default.createDirectory(
             at: SidecarPaths.supportDirectory,
             withIntermediateDirectories: true
         )
         try? FileManager.default.removeItem(at: SidecarPaths.socketURL)
         try? FileManager.default.removeItem(at: SidecarPaths.statusURL)
-        resyncSidecarPackage(uv: uv)
+        if sidecarNeedsSync(sidecarDir: sidecarDir) {
+            resyncSidecarPackage(uv: uv, sidecarDir: sidecarDir)
+            recordSidecarSync(sidecarDir: sidecarDir)
+        }
 
         let task = Process()
         task.executableURL = uv
         task.arguments = ["run", "python", "-m", "lauronflow_sidecar"]
-        task.currentDirectoryURL = SidecarPaths.sidecarProjectDirectory
+        task.currentDirectoryURL = sidecarDir
 
         var env = ProcessInfo.processInfo.environment
         env[SidecarPaths.socketEnvVar] = SidecarPaths.socketURL.path
@@ -115,6 +185,7 @@ final class SidecarProcessManager {
         env["PATH"] = (extraPathDirs + [existingPath]).joined(separator: ":")
         task.environment = env
 
+        rotateLogIfNeeded()
         FileManager.default.createFile(atPath: SidecarPaths.logURL.path, contents: nil)
         if let handle = FileHandle(forWritingAtPath: SidecarPaths.logURL.path) {
             task.standardOutput = handle

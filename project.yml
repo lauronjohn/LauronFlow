@@ -21,8 +21,8 @@ targets:
       properties:
         LSUIElement: YES
         NSMicrophoneUsageDescription: "LauronFlow needs microphone access to transcribe your speech."
-        CFBundleShortVersionString: "1.0.2"
-        CFBundleVersion: "3"
+        CFBundleShortVersionString: "1.0.3"
+        CFBundleVersion: "4"
     entitlements:
       path: LauronFlow/LauronFlow.entitlements
       properties:

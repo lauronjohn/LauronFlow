@@ -25,6 +25,12 @@ enum SidecarPaths {
         supportDirectory.appendingPathComponent("sidecar.log")
     }
 
+    /// Records the SHA-256 of the sidecar's Python sources from the last `uv sync`, so
+    /// `SidecarProcessManager` can skip re-syncing on launch when nothing changed.
+    static var sidecarSyncHashURL: URL {
+        supportDirectory.appendingPathComponent("sidecar_sync_hash.txt")
+    }
+
     static var vocabularyURL: URL {
         supportDirectory.appendingPathComponent("vocabulary.json")
     }
@@ -55,9 +61,11 @@ enum SidecarPaths {
     /// install.sh recorded at build time > the copy bundled into the app's Resources
     /// at build time (see project.yml's "Bundle sidecar Python source" build phase —
     /// this is what makes a downloaded release .app self-contained for testers,
-    /// without a separate sidecar clone/configure-sidecar.sh step) > the original
-    /// single-machine default, kept as a last-resort fallback for pre-existing installs.
-    static var sidecarProjectDirectory: URL {
+    /// without a separate sidecar clone/configure-sidecar.sh step). `nil` if none of
+    /// these resolve, e.g. a pre-existing install whose repo checkout moved and hasn't
+    /// rerun `configure-sidecar.sh` — deliberately no hardcoded single-machine fallback
+    /// here, since that just goes stale the next time the checkout moves.
+    static var sidecarProjectDirectory: URL? {
         if let envPath = ProcessInfo.processInfo.environment["LAURONFLOW_SIDECAR_DIR"], !envPath.isEmpty {
             return URL(fileURLWithPath: envPath)
         }
@@ -71,7 +79,7 @@ enum SidecarPaths {
            FileManager.default.fileExists(atPath: resourceDir.appendingPathComponent("pyproject.toml").path) {
             return resourceDir
         }
-        return URL(fileURLWithPath: "/Users/johnlauron/Desktop/LauronFlow/sidecar")
+        return nil
     }
 
     static func resolveUvExecutable() -> URL? {
