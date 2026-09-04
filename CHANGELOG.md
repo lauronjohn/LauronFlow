@@ -4,6 +4,21 @@ All notable changes to LauronFlow are documented here. The sidecar lives in a se
 repository (`lauronflow-sidecar`); sidecar-affecting changes are flagged below so both
 repos get tagged together at release time.
 
+## [1.0.4] — 2026-09-04
+
+### License & security hardening
+
+- **Revoke on definitive Gumroad rejection.** The silent launch-time license
+  revalidation previously ignored any verify failure, so a previously-activated
+  license whose key later became invalid/revoked stayed active forever. It now
+  revokes on explicit invalid-key/revoked responses, while still keeping the cached
+  license on *network* failures (dictation must keep working offline).
+- **Trial reset hardening.** The trial start date is now recorded in three places
+  (Keychain, UserDefaults, and an Application Support file) and the earliest value
+  wins, so wiping any one store — e.g. only clearing the Keychain item — no longer
+  restarts the 14-day clock. Existing installs are unaffected (their stored date is
+  simply mirrored to the new stores).
+
 ## [1.0.3] — 2026-09-04
 
 ### Memory & performance overhaul

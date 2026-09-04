@@ -41,11 +41,17 @@ final class LicenseManager: ObservableObject {
     private let keychain = KeychainStore(service: "com.lauronjohn.LauronFlow.license")
 
     init() {
-        if keychain.string(for: .firstLaunchDate) == nil {
-            isFirstLaunch = true
-            keychain.set(ISO8601DateFormatter().string(from: Date()), for: .firstLaunchDate)
-        } else {
+        // The trial start date is recorded in three places (Keychain, UserDefaults, and
+        // a file in Application Support) and the *earliest* known value wins. Clearing
+        // any one of them — e.g. a user only wiping the Keychain item — can't restart
+        // the trial, because the older value still survives somewhere and gets written
+        // back. Same posture the license keys take: survive app deletion/reinstall.
+        if let earliest = Self.earliestRecordedFirstLaunch(keychain: keychain) {
             isFirstLaunch = false
+            Self.persistFirstLaunch(earliest, keychain: keychain)
+        } else {
+            isFirstLaunch = true
+            Self.persistFirstLaunch(Date(), keychain: keychain)
         }
         state = Self.computeState(keychain: keychain)
 
@@ -93,7 +99,9 @@ final class LicenseManager: ObservableObject {
 
     /// Silent background check on launch to catch refunds/chargebacks on a previously-activated
     /// license. Network failures (e.g. offline) intentionally leave the cached license alone —
-    /// only an explicit refunded/chargebacked/invalid response revokes it.
+    /// dictation is a local-first feature and must survive being offline. An explicit response
+    /// from Gumroad that the key is invalid/revoked does revoke, since that's a definitive
+    /// server verdict, not a connectivity blip.
     private func revalidateCachedLicense() {
         guard let key = keychain.string(for: .licenseKey) else { return }
         verify(licenseKey: key, incrementUses: false) { [weak self] result in
@@ -101,15 +109,20 @@ final class LicenseManager: ObservableObject {
             switch result {
             case .success(let response):
                 guard response.purchase?.refunded == true || response.purchase?.chargebacked == true else { return }
-                self.keychain.remove(.licenseKey)
-                self.keychain.remove(.licenseValidated)
-                self.keychain.remove(.licenseEmail)
-                DispatchQueue.main.async {
-                    self.state = Self.computeState(keychain: self.keychain)
-                }
-            case .failure:
-                break
+                self.revokeCachedLicense()
+            case .failure(let error):
+                if case .network = error { return }
+                self.revokeCachedLicense()
             }
+        }
+    }
+
+    private func revokeCachedLicense() {
+        keychain.remove(.licenseKey)
+        keychain.remove(.licenseValidated)
+        keychain.remove(.licenseEmail)
+        DispatchQueue.main.async {
+            self.state = Self.computeState(keychain: self.keychain)
         }
     }
 
@@ -165,6 +178,48 @@ final class LicenseManager: ObservableObject {
         let remaining = trialDuration - Date().timeIntervalSince(start)
         guard remaining > 0 else { return .trialExpired }
         return .trial(daysRemaining: Int(ceil(remaining / 86400)))
+    }
+
+    // MARK: - Trial start persistence (redundant stores, earliest wins)
+
+    /// UserDefaults key for the duplicated trial-start record.
+    private static let trialStartDefaultsKey = "trialStartDateISO"
+
+    private static var trialStartFileURL: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("LauronFlow/trial_start.txt")
+    }
+
+    /// Reads every record of the trial start date and returns the earliest valid one.
+    private static func earliestRecordedFirstLaunch(keychain: KeychainStore) -> Date? {
+        let formatter = ISO8601DateFormatter()
+        var candidates: [Date] = []
+
+        if let s = keychain.string(for: .firstLaunchDate), let d = formatter.date(from: s) {
+            candidates.append(d)
+        }
+        if let s = UserDefaults.standard.string(forKey: trialStartDefaultsKey),
+           let d = formatter.date(from: s) {
+            candidates.append(d)
+        }
+        if let s = try? String(contentsOf: trialStartFileURL, encoding: .utf8) {
+            let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty, let d = formatter.date(from: trimmed) {
+                candidates.append(d)
+            }
+        }
+        return candidates.min()
+    }
+
+    /// Writes the trial start date to every store, so a later launch can reconstruct
+    /// it even if one store is cleared.
+    private static func persistFirstLaunch(_ date: Date, keychain: KeychainStore) {
+        let iso = ISO8601DateFormatter().string(from: date)
+        keychain.set(iso, for: .firstLaunchDate)
+        UserDefaults.standard.set(iso, forKey: trialStartDefaultsKey)
+        let dir = trialStartFileURL.deletingLastPathComponent()
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        try? iso.write(to: trialStartFileURL, atomically: true, encoding: .utf8)
     }
 }
 
