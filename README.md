@@ -122,3 +122,7 @@ Accessibility permission prompts.
   (e.g. a password box) has focus.
 - **Dictation just stopped working after a couple weeks:** the 14-day trial likely
   ended — check Settings → License.
+
+## Releasing
+
+See [DEPLOY.md](DEPLOY.md) for the full app-release and landing-site deploy runbook.
